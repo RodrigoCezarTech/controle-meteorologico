@@ -4,6 +4,19 @@
 
 ---
 
+<h2 align="center">📱 Versão Android</h2>
+
+<p align="center">
+  <img src="imagens/imagem_android.jpeg" width="350">
+</p>
+
+<h2 align="center">💻 Versão Web</h2>
+
+<p align="center">
+  <img src="imagens/imagem_web.jpg" width="850">
+</p>
+
+
 ## 🚀 Sobre o Projeto
 Este projeto foi desenvolvido com o objetivo de automatizar a recolha e análise de dados climáticos com base em localizações geográficas específicas. A aplicação integra tecnologias web modernas para recolha de coordenadas de GPS no browser com um script robusto em Python responsável pela limpeza de dados (data cleaning) e consumo da API meteorológica **Open-Meteo**.
 
