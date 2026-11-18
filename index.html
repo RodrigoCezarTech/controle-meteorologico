@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -460,7 +460,7 @@
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
       padding: 0.85rem 1rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.35rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -506,50 +506,6 @@
       text-decoration: underline;
     }
 
-    /* Consentimento */
-    .consent-group {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.65rem;
-      margin-bottom: 1.35rem;
-      cursor: pointer;
-    }
-
-    .consent-group input[type="checkbox"] {
-      appearance: none;
-      width: 17px;
-      height: 17px;
-      border: 1px solid var(--border-subtle);
-      border-radius: 5px;
-      background-color: var(--card-inner);
-      cursor: pointer;
-      flex-shrink: 0;
-      margin-top: 2px;
-      position: relative;
-      transition: all 0.2s;
-    }
-
-    .consent-group input[type="checkbox"]:checked {
-      background-color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .consent-group input[type="checkbox"]:checked::after {
-      content: "✓";
-      position: absolute;
-      color: var(--accent-text);
-      font-size: 12px;
-      font-weight: 900;
-      left: 3px;
-      top: -1px;
-    }
-
-    .consent-group span {
-      font-size: 0.76rem;
-      color: var(--text-secondary);
-      line-height: 1.45;
-    }
-
     /* Botão Principal */
     .btn-submit {
       width: 100%;
@@ -577,8 +533,8 @@
     }
 
     .btn-submit:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
+      opacity: 0.6;
+      cursor: wait;
     }
 
     .submit-note {
@@ -591,9 +547,9 @@
 
     .status-banner {
       margin-top: 1rem;
-      padding: 0.75rem;
+      padding: 0.85rem;
       border-radius: 8px;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       text-align: center;
       display: none;
     }
@@ -815,15 +771,7 @@
           <a id="mapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer">Ver no mapa ↗</a>
         </div>
 
-        <!-- Consentimento -->
-        <label class="consent-group" for="consentCheck">
-          <input type="checkbox" id="consentCheck" required>
-          <span>
-            Concordo em enviar o nome do local, a latitude e a longitude informados ao Google Forms. Sei que a localização pode ser precisa e será armazenada conforme as configurações desse formulário.
-          </span>
-        </label>
-
-        <button type="submit" id="btnSubmit" class="btn-submit" disabled>
+        <button type="submit" id="btnSubmit" class="btn-submit">
           Enviar registro ao Google Forms →
         </button>
 
@@ -852,7 +800,6 @@
     const gpsStatusText = document.getElementById("gpsStatusText");
     const previewText = document.getElementById("previewText");
     const mapLink = document.getElementById("mapLink");
-    const consentCheck = document.getElementById("consentCheck");
     const btnSubmit = document.getElementById("btnSubmit");
     const statusBanner = document.getElementById("statusBanner");
 
@@ -861,8 +808,7 @@
       return parseFloat(val.trim().replace(",", "."));
     }
 
-    function validateForm() {
-      const localVal = inputLocal.value.trim();
+    function updatePreview() {
       const lat = parseCoord(inputLat.value);
       const lng = parseCoord(inputLng.value);
 
@@ -883,17 +829,13 @@
         mapLink.classList.remove("active");
       }
 
-      const isReady = localVal.length > 0 && isLatValid && isLngValid && consentCheck.checked;
-      btnSubmit.disabled = !isReady;
-      return { isReady, lat, lng };
+      return { isLatValid, isLngValid, lat, lng };
     }
 
-    inputLocal.addEventListener("input", validateForm);
-    inputLat.addEventListener("input", validateForm);
-    inputLng.addEventListener("input", validateForm);
-    consentCheck.addEventListener("change", validateForm);
+    inputLat.addEventListener("input", updatePreview);
+    inputLng.addEventListener("input", updatePreview);
 
-    // Captura por GPS somente ao clicar (respeitando o aviso de privacidade)
+    // Captura por GPS ao clicar
     btnGps.addEventListener("click", () => {
       if (!("geolocation" in navigator)) {
         gpsStatusText.textContent = "Seu navegador não suporta geolocalização.";
@@ -915,7 +857,7 @@
           btnGps.textContent = "Atualizar localização";
           gpsStatusText.textContent = `Coordenadas preenchidas com precisão aproximada de ${Math.round(position.coords.accuracy)} metros.`;
           gpsStatusText.style.color = "#8ba3ab";
-          validateForm();
+          updatePreview();
         },
         (error) => {
           btnGps.disabled = false;
@@ -923,7 +865,7 @@
           gpsStatusText.style.color = "#fca5a5";
 
           if (error.code === error.PERMISSION_DENIED) {
-            gpsStatusText.textContent = "Permissão negada. Você pode digitar as coordenadas manualmente.";
+            gpsStatusText.textContent = "Permissão negada. Digite as coordenadas manualmente ou libere o GPS no navegador.";
           } else {
             gpsStatusText.textContent = "Não foi possível obter o GPS agora. Tente novamente ou digite manualmente.";
           }
@@ -936,18 +878,32 @@
       );
     });
 
-    // Envio assíncrono para o Google Forms
+    // Envio direto para o Google Forms
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const { isReady, lat, lng } = validateForm();
-      if (!isReady) return;
+      statusBanner.className = "status-banner";
+
+      const localVal = inputLocal.value.trim();
+      const { isLatValid, isLngValid, lat, lng } = updatePreview();
+
+      if (!localVal) {
+        statusBanner.textContent = "Por favor, informe o Nome do local antes de enviar.";
+        statusBanner.className = "status-banner error";
+        inputLocal.focus();
+        return;
+      }
+
+      if (!isLatValid || !isLngValid) {
+        statusBanner.textContent = "Informe coordenadas válidas ou clique em 'Usar minha localização'.";
+        statusBanner.className = "status-banner error";
+        return;
+      }
 
       btnSubmit.disabled = true;
       btnSubmit.textContent = "Enviando registro...";
-      statusBanner.className = "status-banner";
 
       const formData = new URLSearchParams();
-      formData.append("entry.346371602", inputLocal.value.trim());
+      formData.append("entry.346371602", localVal);
       formData.append("entry.260018039", lat.toFixed(6));
       formData.append("entry.1955144794", lng.toFixed(6));
 
@@ -963,16 +919,13 @@
 
         statusBanner.textContent = "✓ Registro enviado com sucesso para o Google Forms!";
         statusBanner.className = "status-banner success";
-
         inputLocal.value = "";
-        consentCheck.checked = false;
-        validateForm();
       } catch (err) {
-        statusBanner.textContent = "Erro de ligação ao enviar os dados. Verifique a sua internet.";
+        statusBanner.textContent = "Erro de conexão ao enviar os dados. Verifique sua internet.";
         statusBanner.className = "status-banner error";
       } finally {
+        btnSubmit.disabled = false;
         btnSubmit.textContent = "Enviar registro ao Google Forms →";
-        validateForm();
       }
     });
   </script>
