@@ -1,933 +1,1053 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coleta Meteorológica — Registro Geográfico</title>
-  <style>
-    :root {
-      --bg-main: #071318;
-      --bg-gradient: radial-gradient(circle at 25% 45%, #0e2a33 0%, #071318 65%);
-      --card-bg: #0c1c22;
-      --card-inner: #08151a;
-      --border-subtle: #18323b;
-      --border-focus: #46e5b7;
-      --text-primary: #f1f7f9;
-      --text-secondary: #8ba3ab;
-      --text-muted: #5a747d;
-      --accent: #46e5b7;
-      --accent-hover: #35cfa3;
-      --accent-text: #041e18;
-      --accent-glow: rgba(70, 229, 183, 0.15);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-main);
-      background-image: var(--bg-gradient);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 1.75rem 2rem;
-    }
-
-    /* Cabeçalho */
-    header {
-      max-width: 1140px;
-      width: 100%;
-      margin: 0 auto 3rem auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
-
-    .brand-logo {
-      width: 38px;
-      height: 38px;
-      background-color: var(--accent);
-      color: var(--accent-text);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
-
-    .brand-info strong {
-      display: block;
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .brand-info span {
-      display: block;
-      font-size: 0.68rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-top: 2px;
-    }
-
-    .privacy-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background-color: rgba(12, 28, 34, 0.85);
-      border: 1px solid var(--border-subtle);
-      padding: 0.45rem 0.95rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    .privacy-pill::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background-color: var(--accent);
-      box-shadow: 0 0 8px var(--accent);
-    }
-
-    /* Layout Principal em 2 Colunas */
-    main {
-      max-width: 1140px;
-      width: 100%;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 4rem;
-      align-items: center;
-    }
-
-    @media (max-width: 960px) {
-      main {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-      }
-      body {
-        padding: 1.25rem;
-      }
-    }
-
-    /* Coluna Esquerda - Editorial & Globo */
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.65rem;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--accent);
-      margin-bottom: 1.25rem;
-    }
-
-    .eyebrow::before {
-      content: "";
-      width: 24px;
-      height: 1.5px;
-      background-color: var(--accent);
-    }
-
-    .hero-title {
-      font-size: clamp(2.3rem, 4vw, 3.35rem);
-      line-height: 1.08;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.25rem;
-    }
-
-    .hero-title em {
-      font-style: italic;
-      font-weight: 700;
-      color: var(--accent);
-      font-family: Georgia, "Times New Roman", serif;
-    }
-
-    .hero-desc {
-      color: var(--text-secondary);
-      font-size: 0.98rem;
-      line-height: 1.65;
-      max-width: 480px;
-      margin-bottom: 2.25rem;
-    }
-
-    /* Ilustração do Globo */
-    .globe-wrapper {
-      position: relative;
-      width: 230px;
-      height: 230px;
-      margin: 0.5rem 0 2.5rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .globe-svg {
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-
-    .globe-tag {
-      position: absolute;
-      right: -65px;
-      top: 42%;
-      background-color: rgba(10, 26, 32, 0.92);
-      border: 1px solid var(--border-subtle);
-      padding: 0.35rem 0.7rem;
-      border-radius: 6px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      white-space: nowrap;
-    }
-
-    .globe-tag span {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: var(--accent);
-    }
-
-    @keyframes pulseRing {
-      0% { transform: scale(0.8); opacity: 0.9; }
-      100% { transform: scale(2.4); opacity: 0; }
-    }
-
-    .pulse-circle {
-      transform-origin: 145px 96px;
-      animation: pulseRing 2.4s infinite ease-out;
-    }
-
-    /* Passos 01, 02, 03 */
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 1.15rem;
-    }
-
-    .step {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.95rem;
-    }
-
-    .step-badge {
-      width: 28px;
-      height: 28px;
-      border-radius: 7px;
-      background-color: rgba(70, 229, 183, 0.08);
-      border: 1px solid rgba(70, 229, 183, 0.25);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .step strong {
-      display: block;
-      font-size: 0.92rem;
-      color: var(--text-primary);
-      margin-bottom: 0.15rem;
-    }
-
-    .step p {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-    }
-
-    /* Coluna Direita - Cartão do Formulário */
-    .form-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      padding: 2rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55);
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.65rem;
-    }
-
-    .card-top .tag {
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-    }
-
-    .card-top .req-note {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
-
-    .form-card h2 {
-      font-size: 1.45rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.45rem;
-    }
-
-    .card-subtitle {
-      font-size: 0.84rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 1.65rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.35rem;
-    }
-
-    label.field-label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.45rem;
-    }
-
-    label.field-label span {
-      color: var(--accent);
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .input-icon {
-      position: absolute;
-      left: 0.9rem;
-      color: var(--text-muted);
-      pointer-events: none;
-      display: flex;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      background-color: var(--card-inner);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 0.78rem 0.95rem;
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    input[type="text"].with-icon {
-      padding-left: 2.5rem;
-    }
-
-    input[type="text"]::placeholder {
-      color: var(--text-muted);
-    }
-
-    input[type="text"]:focus {
-      outline: none;
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .helper-text {
-      display: block;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      margin-top: 0.4rem;
-    }
-
-    /* Caixa de Preenchimento por GPS */
-    .gps-box {
-      background-color: var(--card-inner);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1.35rem;
-    }
-
-    .gps-box-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.65rem;
-    }
-
-    .gps-info {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.65rem;
-    }
-
-    .gps-icon-circle {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background-color: rgba(70, 229, 183, 0.1);
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .gps-info strong {
-      display: block;
-      font-size: 0.84rem;
-      color: var(--text-primary);
-    }
-
-    .gps-info span {
-      display: block;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      line-height: 1.35;
-    }
-
-    .btn-gps {
-      background-color: rgba(70, 229, 183, 0.08);
-      border: 1px solid rgba(70, 229, 183, 0.35);
-      color: var(--accent);
-      padding: 0.5rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .btn-gps:hover:not(:disabled) {
-      background-color: rgba(70, 229, 183, 0.18);
-    }
-
-    .btn-gps:disabled {
-      opacity: 0.5;
-      cursor: wait;
-    }
-
-    .gps-box-footer {
-      border-top: 1px solid rgba(24, 50, 59, 0.6);
-      padding-top: 0.55rem;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-    }
-
-    /* Grid Latitude / Longitude */
-    .coords-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.85rem;
-      margin-bottom: 1.25rem;
-    }
-
-    /* Prévia das Coordenadas */
-    .preview-box {
-      background-color: var(--card-inner);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 1.35rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .preview-box small {
-      display: block;
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .preview-value {
-      font-size: 0.85rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      color: var(--text-secondary);
-    }
-
-    .preview-value.valid {
-      color: var(--accent);
-    }
-
-    .map-link {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-decoration: none;
-      pointer-events: none;
-      transition: color 0.2s;
-      white-space: nowrap;
-    }
-
-    .map-link.active {
-      color: var(--accent);
-      pointer-events: auto;
-    }
-
-    .map-link.active:hover {
-      text-decoration: underline;
-    }
-
-    /* Botão Principal */
-    .btn-submit {
-      width: 100%;
-      background-color: var(--accent);
-      color: var(--accent-text);
-      border: none;
-      border-radius: 10px;
-      padding: 0.92rem 1.25rem;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s, opacity 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .btn-submit:hover:not(:disabled) {
-      background-color: var(--accent-hover);
-    }
-
-    .btn-submit:active:not(:disabled) {
-      transform: scale(0.99);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-
-    .submit-note {
-      text-align: center;
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 0.75rem;
-      line-height: 1.4;
-    }
-
-    .status-banner {
-      margin-top: 1rem;
-      padding: 0.85rem;
-      border-radius: 8px;
-      font-size: 0.84rem;
-      text-align: center;
-      display: none;
-    }
-
-    .status-banner.success {
-      display: block;
-      background-color: rgba(70, 229, 183, 0.12);
-      border: 1px solid rgba(70, 229, 183, 0.35);
-      color: var(--accent);
-    }
-
-    .status-banner.error {
-      display: block;
-      background-color: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      color: #fca5a5;
-    }
-
-    /* Rodapé */
-    footer {
-      max-width: 1140px;
-      width: 100%;
-      margin: 3.5rem auto 0 auto;
-      padding-top: 1.25rem;
-      border-top: 1px solid rgba(24, 50, 59, 0.6);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    footer a {
-      color: var(--text-secondary);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      transition: color 0.2s;
-    }
-
-    footer a:hover {
-      color: var(--accent);
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <div class="brand">
-      <div class="brand-logo" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-        </svg>
-      </div>
-      <div class="brand-info">
-        <strong>Coleta Meteorológica</strong>
-        <span>Registro Geográfico</span>
-      </div>
-    </div>
-    <div class="privacy-pill">Localização somente com permissão</div>
-  </header>
-
-  <main>
-    <!-- Coluna Esquerda -->
-    <section>
-      <div class="eyebrow">Localização &amp; Dados</div>
-      <h1 class="hero-title">
-        Cada ponto<br>
-        conta uma<br>
-        <em>história do clima.</em>
-      </h1>
-      <p class="hero-desc">
-        Registre um local de coleta meteorológica com suas coordenadas geográficas. Você pode preencher tudo manualmente ou usar a localização do dispositivo, se autorizar.
-      </p>
-
-      <!-- Ilustração Vetorial do Globo -->
-      <div class="globe-wrapper" aria-hidden="true">
-        <svg class="globe-svg" viewBox="0 0 220 220" fill="none">
-          <defs>
-            <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#46e5b7" stop-opacity="0.16"/>
-              <stop offset="75%" stop-color="#0e2a33" stop-opacity="0.06"/>
-              <stop offset="100%" stop-color="#071318" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-          <circle cx="110" cy="110" r="105" fill="url(#globeGlow)"/>
-          <circle cx="110" cy="110" r="82" stroke="#1e424d" stroke-width="1.2"/>
-          <!-- Meridianos e Paralelos -->
-          <ellipse cx="110" cy="110" rx="42" ry="82" stroke="#183640" stroke-width="1"/>
-          <ellipse cx="110" cy="110" rx="68" ry="82" stroke="#183640" stroke-width="1"/>
-          <ellipse cx="110" cy="110" rx="82" ry="30" stroke="#183640" stroke-width="1"/>
-          <ellipse cx="110" cy="110" rx="82" ry="60" stroke="#183640" stroke-width="1"/>
-          <line x1="28" y1="110" x2="192" y2="110" stroke="#224b57" stroke-width="1" stroke-dasharray="3 3"/>
-          <line x1="110" y1="28" x2="110" y2="192" stroke="#224b57" stroke-width="1" stroke-dasharray="3 3"/>
-          <!-- Ponto Geográfico Pulsante -->
-          <circle class="pulse-circle" cx="145" cy="96" r="8" stroke="#46e5b7" stroke-width="1.5"/>
-          <circle cx="145" cy="96" r="4.5" fill="#46e5b7"/>
-        </svg>
-        <div class="globe-tag"><span></span>PONTO GEOGRÁFICO</div>
-      </div>
-
-      <!-- Passos -->
-      <div class="steps">
-        <div class="step">
-          <div class="step-badge">01</div>
-          <div>
-            <strong>Identifique o local</strong>
-            <p>Informe o nome do ponto de coleta.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-badge">02</div>
-          <div>
-            <strong>Adicione a posição</strong>
-            <p>Digite latitude e longitude ou autorize o GPS.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-badge">03</div>
-          <div>
-            <strong>Envie o registro</strong>
-            <p>Os dados são gravados diretamente no Google Forms.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Coluna Direita - Formulário -->
-    <section class="form-card">
-      <div class="card-top">
-        <span class="tag">Novo Registro</span>
-        <span class="req-note">* Campos obrigatórios</span>
-      </div>
-      <h2>Dados do ponto de coleta</h2>
-      <p class="card-subtitle">
-        Os dados preenchidos serão enviados ao formulário “Coleta de dados - meteorológicos”.
-      </p>
-
-      <form id="geoForm" novalidate>
-        <div class="form-group">
-          <label class="field-label" for="local">Nome do local <span>*</span></label>
-          <div class="input-wrapper">
-            <span class="input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            </span>
-            <input 
-              type="text" 
-              id="local" 
-              name="entry.346371602" 
-              class="with-icon"
-              placeholder="Ex: Estação de Cotia" 
-              required
-            >
-          </div>
-          <small class="helper-text">Use um nome que permita identificar o ponto futuramente.</small>
-        </div>
-
-        <!-- Bloco GPS -->
-        <div class="gps-box">
-          <div class="gps-box-top">
-            <div class="gps-info">
-              <div class="gps-icon-circle">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="3"/>
-                  <path d="M12 2v3m0 14v3M2 12h3m14 0h3"/>
-                </svg>
-              </div>
-              <div>
-                <strong>Preenchimento por GPS</strong>
-                <span>Acessamos sua posição apenas se você clicar e autorizar.</span>
-              </div>
-            </div>
-            <button type="button" id="btnGps" class="btn-gps">Usar minha localização</button>
-          </div>
-          <div class="gps-box-footer" id="gpsStatusText">
-            Você também pode informar as coordenadas manualmente.
-          </div>
-        </div>
-
-        <!-- Campos Latitude e Longitude -->
-        <div class="coords-grid">
-          <div>
-            <label class="field-label" for="latitude">Latitude <span>*</span></label>
-            <input 
-              type="text" 
-              id="latitude" 
-              name="entry.260018039" 
-              placeholder="Ex: -23.603500" 
-              inputmode="decimal"
-              required
-            >
-            <small class="helper-text">De -90 até 90. Aceita vírgula ou ponto.</small>
-          </div>
-
-          <div>
-            <label class="field-label" for="longitude">Longitude <span>*</span></label>
-            <input 
-              type="text" 
-              id="longitude" 
-              name="entry.1955144794" 
-              placeholder="Ex: -46.919500" 
-              inputmode="decimal"
-              required
-            >
-            <small class="helper-text">De -180 até 180. Aceita vírgula ou ponto.</small>
-          </div>
-        </div>
-
-        <!-- Prévia das Coordenadas -->
-        <div class="preview-box">
-          <div>
-            <small>Prévia das Coordenadas</small>
-            <div id="previewText" class="preview-value">Aguardando coordenadas válidas...</div>
-          </div>
-          <a id="mapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer">Ver no mapa ↗</a>
-        </div>
-
-        <button type="submit" id="btnSubmit" class="btn-submit">
-          Enviar registro ao Google Forms →
-        </button>
-
-        <p class="submit-note">
-          O envio é realizado diretamente para a planilha integrada ao formulário sem sair desta página.
-        </p>
-
-        <div id="statusBanner" class="status-banner"></div>
-      </form>
-    </section>
-  </main>
-
-  <footer>
-    <p>Coleta Meteorológica · Interface independente integrada ao Google Forms.</p>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/viewform" target="_blank" rel="noopener noreferrer">Abrir formulário original ↗</a>
-  </footer>
-
+\<!DOCTYPE html>\
+\<html lang="pt-BR">\
+\<head>\
+&#x20; \<meta charset="UTF-8">\
+&#x20; \<meta name="viewport" content="width=device-width, initial-scale=1.0">\
+&#x20; \<title>Coleta Meteorológica — Registro Geográfico\</title>\
+&#x20; \<style>\
+&#x20;   :root {\
+&#x20;     \--bg-main: #071318;\
+&#x20;     \--bg-gradient: radial-gradient(circle at 25% 45%, #0e2a33 0%, #071318 65%);\
+&#x20;     \--card-bg: #0c1c22;\
+&#x20;     \--card-inner: #08151a;\
+&#x20;     \--border-subtle: #18323b;\
+&#x20;     \--border-focus: #46e5b7;\
+&#x20;     \--text-primary: #f1f7f9;\
+&#x20;     \--text-secondary: #8ba3ab;\
+&#x20;     \--text-muted: #5a747d;\
+&#x20;     \--accent: #46e5b7;\
+&#x20;     \--accent-hover: #35cfa3;\
+&#x20;     \--accent-text: #041e18;\
+&#x20;     \--accent-glow: rgba(70, 229, 183, 0.15);\
+&#x20;   }\
+\
+&#x20;   \* {\
+&#x20;     box-sizing: border-box;\
+&#x20;     margin: 0;\
+&#x20;     padding: 0;\
+&#x20;     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;\
+&#x20;   }\
+\
+&#x20;   body {\
+&#x20;     background-color: var(--bg-main);\
+&#x20;     background-image: var(--bg-gradient);\
+&#x20;     color: var(--text-primary);\
+&#x20;     min-height: 100vh;\
+&#x20;     display: flex;\
+&#x20;     flex-direction: column;\
+&#x20;     justify-content: space-between;\
+&#x20;     padding: 1.75rem 2rem;\
+&#x20;   }\
+\
+&#x20;   /\* Cabeçalho \*/\
+&#x20;   header {\
+&#x20;     max-width: 1140px;\
+&#x20;     width: 100%;\
+&#x20;     margin: 0 auto 3rem auto;\
+&#x20;     display: flex;\
+&#x20;     justify-content: space-between;\
+&#x20;     align-items: center;\
+&#x20;     flex-wrap: wrap;\
+&#x20;     gap: 1rem;\
+&#x20;   }\
+\
+&#x20;   .brand {\
+&#x20;     display: flex;\
+&#x20;     align-items: center;\
+&#x20;     gap: 0.85rem;\
+&#x20;   }\
+\
+&#x20;   .brand-logo {\
+&#x20;     width: 38px;\
+&#x20;     height: 38px;\
+&#x20;     background-color: var(--accent);\
+&#x20;     color: var(--accent-text);\
+&#x20;     border-radius: 10px;\
+&#x20;     display: flex;\
+&#x20;     align-items: center;\
+&#x20;     justify-content: center;\
+&#x20;     box-shadow: 0 0 20px var(--accent-glow);\
+&#x20;   }\
+\
+&#x20;   .brand-info strong {\
+&#x20;     display: block;\
+&#x20;     font-size: 1.05rem;\
+&#x20;     font-weight: 700;\
+&#x20;     letter-spacing: -0.01em;\
+&#x20;   }\
+\
+&#x20;   .brand-info span {\
+&#x20;     display: block;\
+&#x20;     font-size: 0.68rem;\
+&#x20;     color: var(--text-secondary);\
+&#x20;     text-transform: uppercase;\
+&#x20;     letter-spacing: 0.12em;\
+&#x20;     margin-top: 2px;\
+&#x20;   }\
+\
+&#x20;   .privacy-pill {\
+&#x20;     display: inline-flex;\
+&#x20;     align-items: center;\
+&#x20;     gap: 0.5rem;\
+&#x20;     background-color: rgba(12, 28, 34, 0.85);\
+&#x20;     border: 1px solid var(--border-subtle);\
+&#x20;     padding: 0.45rem 0.95rem;\
+&#x20;     border-radius: 999px;\
+&#x20;     font-size: 0.8rem;\
+&#x20;     color: var(--text-secondary);\
+&#x20;   }\
+\
+&#x20;   .privacy-pill::before {\
+&#x20;     content: "";\
+&#x20;     width: 7px;\
+&#x20;     height: 7px;\
+&#x20;     border-radius: 50%;\
+&#x20;     background-color: var(--accent);\
+&#x20;     box-shadow: 0 0 8px var(--accent);\
+&#x20;   }\
+\
+&#x20;   /\* Layout Principal em 2 Colunas \*/\
+&#x20;   main {\
+&#x20;     max-width: 1140px;\
+&#x20;     width: 100%;\
+&#x20;     margin: 0 auto;\
+&#x20;     display: grid;\
+&#x20;     grid-template-columns: 1.05fr 0.95fr;\
+&#x20;     gap: 4rem;\
+&#x20;     align-items: center;\
+&#x20;   }\
+\
+&#x20;   @media (max-width: 960px) {\
+&#x20;     main {\
+&#x20;       grid-template-columns: 1fr;\
+&#x20;       gap: 2.5rem;\
+&#x20;     }\
+&#x20;     body {\
+&#x20;       padding: 1.25rem;\
+&#x20;     }\
+&#x20;   }\
+\
+&#x20;   /\* Coluna Esquerda - Editorial & Globo \*/\
+&#x20;   .eyebrow {\
+&#x20;     display: inline-flex;\
+&#x20;     align-items: center;\
+&#x20;     gap: 0.65rem;\
+&#x20;     font-size: 0.72rem;\
+&#x20;     font-weight: 700;\
+&#x20;     text-transform: uppercase;\
+&#x20;     letter-spacing: 0.14em;\
+&#x20;     color: var(--accent);\
+&#x20;     margin-bottom: 1.25rem;\
+&#x20;   }\
+\
+&#x20;   .eyebrow::before {\
+&#x20;     content: "";\
+&#x20;     width: 24px;\
+&#x20;     height: 1.5px;\
+&#x20;     background-color: var(--accent);\
+&#x20;   }\
+\
+&#x20;   .hero-title {\
+&#x20;     font-size: clamp(2.3rem, 4vw, 3.35rem);\
+&#x20;     line-height: 1.08;\
+&#x20;     font-weight: 800;\
+&#x20;     letter-spacing: -0.03em;\
+&#x20;     margin-bottom: 1.25rem;\
+&#x20;   }\
+\
+&#x20;   .hero-title em {\
+&#x20;     font-style: italic;\
+&#x20;     font-weight: 700;\
+&#x20;     color: var(--accent);\
+&#x20;     font-family: Georgia, "Times New Roman", serif;\
+&#x20;   }\
+\
+&#x20;   .hero-desc {\
+&#x20;     color: var(--text-secondary);\
+&#x20;     font-size: 0.98rem;\
+&#x20;     line-height: 1.65;\
+&#x20;     max-width: 480px;\
+&#x20;     margin-bottom: 2.25rem;\
+&#x20;   }\
+\
+&#x20;   /\* Ilustração do Globo \*/\
+&#x20;   .globe-wrapper {\
+&#x20;     position: relative;\
+&#x20;     width: 230px;\
+&#x20;     height: 230px;\
+&#x20;     margin: 0.5rem 0 2.5rem 1.5rem;\
+&#x20;     display: flex;\
+&#x20;     align-items: center;\
+&#x20;     justify-content: center;\
+&#x20;   }\
+\
+&#x20;   .globe-svg {\
+&#x20;     width: 100%;\
+&#x20;     height: 100%;\
+&#x20;     overflow: visible;\
+&#x20;   }\
+\
+&#x20;   .globe-tag {\
+&#x20;     position: absolute;\
+&#x20;     right: -65px;\
+&#x20;     top: 42%;\
+&#x20;     background-color: rgba(10, 26, 32, 0.92);\
+&#x20;     border: 1px solid var(--border-subtle);\
+&#x20;     padding: 0.35rem 0.7rem;\
+&#x20;     border-radius: 6px;\
+&#x20;     font-size: 0.65rem;\
+&#x20;     font-weight: 700;\
+&#x20;     letter-spacing: 0.1em;\
+&#x20;     color: var(--text-primary);\
+&#x20;     display: flex;\
+&#x20;     align-items: center;\
+&#x20;     gap: 0.45rem;\
+&#x20;     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);\
+&#x20;     white-space: nowrap;\
+&#x20;   }\
+\
+&#x20;   .globe-tag span {\
+&#x20;     width: 6px;\
+&#x20;     height: 6px;\
+&#x20;     border-radius: 50%;\
+&#x20;     background-color: var(--accent);\
+&#x20;   }\
+\
+&#x20;   @keyframes pulseRing {\
+&#x20;     0% { transform: scale(0.8); opacity: 0.9; }\
+&#x20;     100% { transform: scale(2.4); opacity: 0; }\
+&#x20;   }\
+\
+&#x20;   .pulse-circle {\
+&#x20;     transform-origin: 145px 96px;\
+&#x20;     animation: pulseRing 2.4s infinite ease-out;\
+&#x20;   }\
+\
+&#x20;   /\* Passos 01, 02, 03 \*/\
+&#x20;   .steps {\
+&#x20;     display: flex;\
+&#x20;     flex-direction: column;\
+&#x20;     gap: 1.15rem;\
+&#x20;   }\
+\
+&#x20;   .step {\
+&#x20;     display: flex;\
+&#x20;     align-items: flex-start;\
+&#x20;     gap: 0.95rem;\
+&#x20;   }\
+\
+&#x20;   .step-badge {\
+&#x20;     width: 28px;\
+&#x20;     height: 28px;\
+&#x20;     border-radius: 7px;\
+&#x20;     background-color: rgba(70, 229, 183, 0.08);\
+&#x20;     border: 1px solid rgba(70, 229, 183, 0.25);\
+&#x20;     color: var(--accent);\
+&#x20;     font-size: 0.75rem;\
+&#x20;     font-weight: 700;\
+&#x20;     display: flex;\
+&#x20;     align-items: center;\
+&#x20;     justify-content: center;\
+&#x20;     flex-shrink: 0;\
+&#x20;     margin-top: 2px;\
+&#x20;   }\
+\
+&#x20;   .step strong {\
+&#x20;     display: block;\
+&#x20;     font-size: 0.92rem;\
+&#x20;     color: var(--text-primary);\
+&#x20;     margin-bottom: 0.15rem;\
+&#x20;   }\
+\
+&#x20;   .step p {\
+&#x20;     font-size: 0.82rem;\
+&#x20;     color: var(--text-secondary);\
+&#x20;   }\
+\
+&#x20;   /\* Coluna Direita - Cartão do Formulário \*/\
+&#x20;   .form-card {\
+&#x20;     background-color: var(--card-bg);\
+&#x20;     border: 1px solid var(--border-subtle);\
+&#x20;     border-radius: 18px;\
+&#x20;     padding: 2rem;\
+&#x20;     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55);\
+&#x20;   }\
+\
+&#x20;   .card-top {\
+&#x20;     display: flex;\
+&#x20;     justify-content: space-between;\
+&#x20;     align-items: center;\
+&#x20;     margin-bottom: 0.65rem;\
+&#x20;   }\
+\
+&#x20;   .card-top .tag {\
+&#x20;     font-size: 0.68rem;\
+&#x20;     font-weight: 700;\
+&#x20;     text-transform: uppercase;\
+&#x20;     letter-spacing: 0.12em;\
+&#x20;     color: var(--accent);\
+&#x20;   }\
+\
+&#x20;   .card-top .req-note {\
+&#x20;     font-size: 0.72rem;\
+&#x20;     color: var(--text-muted);\
+&#x20;   }\
+\
+&#x20;   .form-card h2 {\
+&#x20;     font-size: 1.45rem;\
+&#x20;     font-weight: 700;\
+&#x20;     letter-spacing: -0.02em;\
+&#x20;     margin-bottom: 0.45rem;\
+&#x20;   }\
+\
+&#x20;   .card-subtitle {\
+&#x20;     font-size: 0.84rem;\
+&#x20;     color: var(--text-secondary);\
+&#x20;     line-height: 1.5;\
+&#x20;     margin-bottom: 1.65rem;\
+&#x20;   }\
+\
+&#x20;   .form-group {\
+&#x20;     margin-bottom: 1.35rem;\
+&#x20;   }\
+\
+&#x20;   label.field-label {\
+&#x20;     display: block;\
+&#x20;     font-size: 0.82rem;\
+&#x20;     font-weight: 600;\
+&#x20;     color: var(--text-primary);\
+&#x20;     margin-bottom: 0.45rem;\
+&#x20;   }\
+\
+&#x20;   label.field-label span {\
+&#x20;     color: var(--accent);\
+&#x20;   }\
+\
+&#x20;   .input-wrapper {\
+&#x20;     position: relative;\
+&#x20;     display: flex;\
+&#x20;     align-items: center;\
+&#x20;   }\
+\
+&#x20;   .input-icon {\
+&#x20;     position: absolute;\
+&#x20;     left: 0.9rem;\
+&#x20;     color: var(--text-muted);\
+&#x20;     pointer-events: none;\
+&#x20;     display: flex;\
+&#x20;   }\
+\
+&#x20;   input[type="text"] {\
+&#x20;     width: 100%;\
+&#x20;     background-color: var(--card-inner);\
+&#x20;     border: 1px solid var(--border-subtle);\
+&#x20;     border-radius: 10px;\
+&#x20;     padding: 0.78rem 0.95rem;\
+&#x20;     color: var(--text-primary);\
+&#x20;     font-size: 0.9rem;\
+&#x20;     transition: border-color 0.2s, box-shadow 0.2s;\
+&#x20;   }\
+\
+&#x20;   input[type="text"].with-icon {\
+&#x20;     padding-left: 2.5rem;\
+&#x20;   }\
+\
+&#x20;   input[type="text"]::placeholder {\
+&#x20;     color: var(--text-muted);\
+&#x20;   }\
+\
+&#x20;   input[type="text"]:focus {\
+&#x20;     outline: none;\
+&#x20;     border-color: var(--border-focus);\
+&#x20;     box-shadow: 0 0 0 3px var(--accent-glow);\
+&#x20;   }\
+\
+&#x20;   .helper-text {\
+&#x20;     display: block;\
+&#x20;     font-size: 0.74rem;\
+&#x20;     color: var(--text-muted);\
+&#x20;     margin-top: 0.4rem;\
+&#x20;   }\
+\
+&#x20;   /\* Caixa de Preenchimento por GPS \*/\
+&#x20;   .gps-box {\
+&#x20;     background-color: var(--card-inner);\
+&#x20;     border: 1px solid var(--border-subtle);\
+&#x20;     border-radius: 12px;\
+&#x20;     padding: 1rem;\
+&#x20;     margin-bottom: 1.35rem;\
+&#x20;   }\
+\
+&#x20;   .gps-box-top {\
+&#x20;     display: flex;\
+&#x20;     justify-content: space-between;\
+&#x20;     align-items: center;\
+&#x20;     gap: 0.75rem;\
+&#x20;     margin-bottom: 0.65rem;\
+&#x20;   }\
+\
+&#x20;   .gps-info {\
+&#x20;     display: flex;\
+&#x20;     align-items: flex-start;\
+&#x20;     gap: 0.65rem;\
+&#x20;   }\
+\
+&#x20;   .gps-icon-circle {\
+&#x20;     width: 30px;\
+&#x20;     height: 30px;\
+&#x20;     border-radius: 50%;\
+&#x20;     background-color: rgba(70, 229, 183, 0.1);\
+&#x20;     color: var(--accent);\
+&#x20;     display: flex;\
+&#x20;     align-items: center;\
+&#x20;     justify-content: center;\
+&#x20;     flex-shrink: 0;\
+&#x20;   }\
+\
+&#x20;   .gps-info strong {\
+&#x20;     display: block;\
+&#x20;     font-size: 0.84rem;\
+&#x20;     color: var(--text-primary);\
+&#x20;   }\
+\
+&#x20;   .gps-info span {\
+&#x20;     display: block;\
+&#x20;     font-size: 0.75rem;\
+&#x20;     color: var(--text-secondary);\
+&#x20;     line-height: 1.35;\
+&#x20;   }\
+\
+&#x20;   .btn-gps {\
+&#x20;     background-color: rgba(70, 229, 183, 0.08);\
+&#x20;     border: 1px solid rgba(70, 229, 183, 0.35);\
+&#x20;     color: var(--accent);\
+&#x20;     padding: 0.5rem 0.85rem;\
+&#x20;     border-radius: 8px;\
+&#x20;     font-size: 0.78rem;\
+&#x20;     font-weight: 600;\
+&#x20;     cursor: pointer;\
+&#x20;     white-space: nowrap;\
+&#x20;     transition: all 0.2s;\
+&#x20;   }\
+\
+&#x20;   .btn-gps:hover:not(:disabled) {\
+&#x20;     background-color: rgba(70, 229, 183, 0.18);\
+&#x20;   }\
+\
+&#x20;   .btn-gps:disabled {\
+&#x20;     opacity: 0.5;\
+&#x20;     cursor: wait;\
+&#x20;   }\
+\
+&#x20;   .gps-box-footer {\
+&#x20;     border-top: 1px solid rgba(24, 50, 59, 0.6);\
+&#x20;     padding-top: 0.55rem;\
+&#x20;     font-size: 0.74rem;\
+&#x20;     color: var(--text-muted);\
+&#x20;   }\
+\
+&#x20;   /\* Grid Latitude / Longitude \*/\
+&#x20;   .coords-grid {\
+&#x20;     display: grid;\
+&#x20;     grid-template-columns: 1fr 1fr;\
+&#x20;     gap: 0.85rem;\
+&#x20;     margin-bottom: 1.25rem;\
+&#x20;   }\
+\
+&#x20;   /\* Prévia das Coordenadas \*/\
+&#x20;   .preview-box {\
+&#x20;     background-color: var(--card-inner);\
+&#x20;     border: 1px solid var(--border-subtle);\
+&#x20;     border-radius: 10px;\
+&#x20;     padding: 0.85rem 1rem;\
+&#x20;     margin-bottom: 1.35rem;\
+&#x20;     display: flex;\
+&#x20;     justify-content: space-between;\
+&#x20;     align-items: center;\
+&#x20;     gap: 0.5rem;\
+&#x20;   }\
+\
+&#x20;   .preview-box small {\
+&#x20;     display: block;\
+&#x20;     font-size: 0.65rem;\
+&#x20;     font-weight: 700;\
+&#x20;     text-transform: uppercase;\
+&#x20;     letter-spacing: 0.1em;\
+&#x20;     color: var(--text-muted);\
+&#x20;     margin-bottom: 0.25rem;\
+&#x20;   }\
+\
+&#x20;   .preview-value {\
+&#x20;     font-size: 0.85rem;\
+&#x20;     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;\
+&#x20;     color: var(--text-secondary);\
+&#x20;   }\
+\
+&#x20;   .preview-value.valid {\
+&#x20;     color: var(--accent);\
+&#x20;   }\
+\
+&#x20;   .map-link {\
+&#x20;     font-size: 0.78rem;\
+&#x20;     font-weight: 600;\
+&#x20;     color: var(--text-muted);\
+&#x20;     text-decoration: none;\
+&#x20;     pointer-events: none;\
+&#x20;     transition: color 0.2s;\
+&#x20;     white-space: nowrap;\
+&#x20;   }\
+\
+&#x20;   .map-link.active {\
+&#x20;     color: var(--accent);\
+&#x20;     pointer-events: auto;\
+&#x20;   }\
+\
+&#x20;   .map-link.active:hover {\
+&#x20;     text-decoration: underline;\
+&#x20;   }\
+\
+&#x20;   /\* Botão Principal \*/\
+&#x20;   .btn-submit {\
+&#x20;     width: 100%;\
+&#x20;     background-color: var(--accent);\
+&#x20;     color: var(--accent-text);\
+&#x20;     border: none;\
+&#x20;     border-radius: 10px;\
+&#x20;     padding: 0.92rem 1.25rem;\
+&#x20;     font-size: 0.92rem;\
+&#x20;     font-weight: 700;\
+&#x20;     cursor: pointer;\
+&#x20;     transition: background-color 0.2s, transform 0.1s, opacity 0.2s;\
+&#x20;     display: flex;\
+&#x20;     align-items: center;\
+&#x20;     justify-content: center;\
+&#x20;     gap: 0.5rem;\
+&#x20;   }\
+\
+&#x20;   .btn-submit:hover:not(:disabled) {\
+&#x20;     background-color: var(--accent-hover);\
+&#x20;   }\
+\
+&#x20;   .btn-submit:active:not(:disabled) {\
+&#x20;     transform: scale(0.99);\
+&#x20;   }\
+\
+&#x20;   .btn-submit:disabled {\
+&#x20;     opacity: 0.6;\
+&#x20;     cursor: wait;\
+&#x20;   }\
+\
+&#x20;   .submit-note {\
+&#x20;     text-align: center;\
+&#x20;     font-size: 0.72rem;\
+&#x20;     color: var(--text-muted);\
+&#x20;     margin-top: 0.75rem;\
+&#x20;     line-height: 1.4;\
+&#x20;   }\
+\
+&#x20;   .status-banner {\
+&#x20;     margin-top: 1rem;\
+&#x20;     padding: 0.85rem;\
+&#x20;     border-radius: 8px;\
+&#x20;     font-size: 0.84rem;\
+&#x20;     text-align: center;\
+&#x20;     display: none;\
+&#x20;   }\
+\
+&#x20;   .status-banner.success {\
+&#x20;     display: block;\
+&#x20;     background-color: rgba(70, 229, 183, 0.12);\
+&#x20;     border: 1px solid rgba(70, 229, 183, 0.35);\
+&#x20;     color: var(--accent);\
+&#x20;   }\
+\
+&#x20;   .status-banner.error {\
+&#x20;     display: block;\
+&#x20;     background-color: rgba(239, 68, 68, 0.12);\
+&#x20;     border: 1px solid rgba(239, 68, 68, 0.35);\
+&#x20;     color: #fca5a5;\
+&#x20;   }\
+\
+&#x20;   /\* Rodapé \*/\
+&#x20;   footer {\
+&#x20;     max-width: 1140px;\
+&#x20;     width: 100%;\
+&#x20;     margin: 3.5rem auto 0 auto;\
+&#x20;     padding-top: 1.25rem;\
+&#x20;     border-top: 1px solid rgba(24, 50, 59, 0.6);\
+&#x20;     display: flex;\
+&#x20;     justify-content: space-between;\
+&#x20;     align-items: center;\
+&#x20;     flex-wrap: wrap;\
+&#x20;     gap: 1rem;\
+&#x20;     font-size: 0.78rem;\
+&#x20;     color: var(--text-muted);\
+&#x20;   }\
+\
+&#x20;   footer a {\
+&#x20;     color: var(--text-secondary);\
+&#x20;     text-decoration: underline;\
+&#x20;     text-underline-offset: 3px;\
+&#x20;     transition: color 0.2s;\
+&#x20;   }\
+\
+&#x20;   footer a:hover {\
+&#x20;     color: var(--accent);\
+&#x20;   }\
+&#x20; \</style>\
+\</head>\
+\<body>\
+\
+&#x20; \<header>\
+&#x20;   \<div class="brand">\
+&#x20;     \<div class="brand-logo" aria-hidden="true">\
+&#x20;       \<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\
+&#x20;         \<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>\
+&#x20;       \</svg>\
+&#x20;     \</div>\
+&#x20;     \<div class="brand-info">\
+&#x20;       \<strong>Coleta Meteorológica\</strong>\
+&#x20;       \<span>Registro Geográfico\</span>\
+&#x20;     \</div>\
+&#x20;   \</div>\
+&#x20;   \<div class="privacy-pill">Localização somente com permissão\</div>\
+&#x20; \</header>\
+\
+&#x20; \<main>\
+&#x20;   \<!-- Coluna Esquerda -->\
+&#x20;   \<section>\
+&#x20;     \<div class="eyebrow">Localização &amp; Dados\</div>\
+&#x20;     \<h1 class="hero-title">\
+&#x20;       Cada ponto\<br>\
+&#x20;       conta uma\<br>\
+&#x20;       \<em>história do clima.\</em>\
+&#x20;     \</h1>\
+&#x20;     \<p class="hero-desc">\
+&#x20;       Registre um local de coleta meteorológica com suas coordenadas geográficas. Você pode preencher tudo manualmente ou usar a localização do dispositivo, se autorizar.\
+&#x20;     \</p>\
+\
+&#x20;     \<!-- Ilustração Vetorial do Globo -->\
+&#x20;     \<div class="globe-wrapper" aria-hidden="true">\
+&#x20;       \<svg class="globe-svg" viewBox="0 0 220 220" fill="none">\
+&#x20;         \<defs>\
+&#x20;           \<radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">\
+&#x20;             \<stop offset="0%" stop-color="#46e5b7" stop-opacity="0.16"/>\
+&#x20;             \<stop offset="75%" stop-color="#0e2a33" stop-opacity="0.06"/>\
+&#x20;             \<stop offset="100%" stop-color="#071318" stop-opacity="0"/>\
+&#x20;           \</radialGradient>\
+&#x20;         \</defs>\
+&#x20;         \<circle cx="110" cy="110" r="105" fill="url(#globeGlow)"/>\
+&#x20;         \<circle cx="110" cy="110" r="82" stroke="#1e424d" stroke-width="1.2"/>\
+&#x20;         \<!-- Meridianos e Paralelos -->\
+&#x20;         \<ellipse cx="110" cy="110" rx="42" ry="82" stroke="#183640" stroke-width="1"/>\
+&#x20;         \<ellipse cx="110" cy="110" rx="68" ry="82" stroke="#183640" stroke-width="1"/>\
+&#x20;         \<ellipse cx="110" cy="110" rx="82" ry="30" stroke="#183640" stroke-width="1"/>\
+&#x20;         \<ellipse cx="110" cy="110" rx="82" ry="60" stroke="#183640" stroke-width="1"/>\
+&#x20;         \<line x1="28" y1="110" x2="192" y2="110" stroke="#224b57" stroke-width="1" stroke-dasharray="3 3"/>\
+&#x20;         \<line x1="110" y1="28" x2="110" y2="192" stroke="#224b57" stroke-width="1" stroke-dasharray="3 3"/>\
+&#x20;         \<!-- Ponto Geográfico Pulsante -->\
+&#x20;         \<circle class="pulse-circle" cx="145" cy="96" r="8" stroke="#46e5b7" stroke-width="1.5"/>\
+&#x20;         \<circle cx="145" cy="96" r="4.5" fill="#46e5b7"/>\
+&#x20;       \</svg>\
+&#x20;       \<div class="globe-tag">\<span>\</span>PONTO GEOGRÁFICO\</div>\
+&#x20;     \</div>\
+\
+&#x20;     \<!-- Passos -->\
+&#x20;     \<div class="steps">\
+&#x20;       \<div class="step">\
+&#x20;         \<div class="step-badge">01\</div>\
+&#x20;         \<div>\
+&#x20;           \<strong>Identifique o local\</strong>\
+&#x20;           \<p>Informe o nome do ponto de coleta.\</p>\
+&#x20;         \</div>\
+&#x20;       \</div>\
+&#x20;       \<div class="step">\
+&#x20;         \<div class="step-badge">02\</div>\
+&#x20;         \<div>\
+&#x20;           \<strong>Adicione a posição\</strong>\
+&#x20;           \<p>Digite latitude e longitude ou autorize o GPS.\</p>\
+&#x20;         \</div>\
+&#x20;       \</div>\
+&#x20;       \<div class="step">\
+&#x20;         \<div class="step-badge">03\</div>\
+&#x20;         \<div>\
+&#x20;           \<strong>Envie o registro\</strong>\
+&#x20;           \<p>Os dados são gravados diretamente no Google Forms.\</p>\
+&#x20;         \</div>\
+&#x20;       \</div>\
+&#x20;     \</div>\
+&#x20;   \</section>\
+\
+&#x20;   \<!-- Coluna Direita - Formulário -->\
+&#x20;   \<section class="form-card">\
+&#x20;     \<div class="card-top">\
+&#x20;       \<span class="tag">Novo Registro\</span>\
+&#x20;       \<span class="req-note">\* Campos obrigatórios\</span>\
+&#x20;     \</div>\
+&#x20;     \<h2>Dados do ponto de coleta\</h2>\
+&#x20;     \<p class="card-subtitle">\
+&#x20;       Os dados preenchidos serão enviados ao formulário “Coleta de dados - meteorológicos”.\
+&#x20;     \</p>\
+\
+&#x20;     \<form id="geoForm" novalidate>\
+&#x20;       \<div class="form-group">\
+&#x20;         \<label class="field-label" for="local">Nome do local \<span>\*\</span>\</label>\
+&#x20;         \<div class="input-wrapper">\
+&#x20;           \<span class="input-icon">\
+&#x20;             \<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\
+&#x20;               \<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>\
+&#x20;               \<circle cx="12" cy="10" r="3"/>\
+&#x20;             \</svg>\
+&#x20;           \</span>\
+&#x20;           \<input \
+&#x20;             type="text" \
+&#x20;             id="local" \
+&#x20;             name="entry.346371602" \
+&#x20;             class="with-icon"\
+&#x20;             placeholder="Ex: Estação de Cotia" \
+&#x20;             required\
+&#x20;           \>\
+&#x20;         \</div>\
+&#x20;         \<small class="helper-text">Use um nome que permita identificar o ponto futuramente.\</small>\
+&#x20;       \</div>\
+\
+&#x20;       \<!-- Bloco GPS -->\
+&#x20;       \<div class="gps-box">\
+&#x20;         \<div class="gps-box-top">\
+&#x20;           \<div class="gps-info">\
+&#x20;             \<div class="gps-icon-circle">\
+&#x20;               \<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\
+&#x20;                 \<circle cx="12" cy="12" r="3"/>\
+&#x20;                 \<path d="M12 2v3m0 14v3M2 12h3m14 0h3"/>\
+&#x20;               \</svg>\
+&#x20;             \</div>\
+&#x20;             \<div>\
+&#x20;               \<strong>Preenchimento por GPS\</strong>\
+&#x20;               \<span>Acessamos sua posição apenas se você clicar e autorizar.\</span>\
+&#x20;             \</div>\
+&#x20;           \</div>\
+&#x20;           \<button type="button" id="btnGps" class="btn-gps">Usar minha localização\</button>\
+&#x20;         \</div>\
+&#x20;         \<div class="gps-box-footer" id="gpsStatusText">\
+&#x20;           Você também pode informar as coordenadas manualmente.\
+&#x20;         \</div>\
+&#x20;       \</div>\
+\
+&#x20;       \<!-- Campos Latitude e Longitude -->\
+&#x20;       \<div class="coords-grid">\
+&#x20;         \<div>\
+&#x20;           \<label class="field-label" for="latitude">Latitude \<span>\*\</span>\</label>\
+&#x20;           \<input \
+&#x20;             type="text" \
+&#x20;             id="latitude" \
+&#x20;             name="entry.260018039" \
+&#x20;             placeholder="Ex: -23.603500" \
+&#x20;             inputmode="decimal"\
+&#x20;             required\
+&#x20;           \>\
+&#x20;           \<small class="helper-text">De -90 até 90. Aceita vírgula ou ponto.\</small>\
+&#x20;         \</div>\
+\
+&#x20;         \<div>\
+&#x20;           \<label class="field-label" for="longitude">Longitude \<span>\*\</span>\</label>\
+&#x20;           \<input \
+&#x20;             type="text" \
+&#x20;             id="longitude" \
+&#x20;             name="entry.1955144794" \
+&#x20;             placeholder="Ex: -46.919500" \
+&#x20;             inputmode="decimal"\
+&#x20;             required\
+&#x20;           \>\
+&#x20;           \<small class="helper-text">De -180 até 180. Aceita vírgula ou ponto.\</small>\
+&#x20;         \</div>\
+&#x20;       \</div>\
+\
+&#x20;       \<!-- Prévia das Coordenadas -->\
+&#x20;       \<div class="preview-box">\
+&#x20;         \<div>\
+&#x20;           \<small>Prévia das Coordenadas\</small>\
+&#x20;           \<div id="previewText" class="preview-value">Aguardando coordenadas válidas...\</div>\
+&#x20;         \</div>\
+&#x20;         \<a id="mapLink" class="map-link" href="#" target="\_blank" rel="noopener noreferrer">Ver no mapa ↗\</a>\
+&#x20;       \</div>\
+\
+&#x20;       \<button type="submit" id="btnSubmit" class="btn-submit">\
+&#x20;         Enviar registro ao Google Forms →\
+&#x20;       \</button>\
+\
+&#x20;       \<p class="submit-note">\
+&#x20;         O envio é realizado diretamente para a planilha integrada ao formulário sem sair desta página.\
+&#x20;       \</p>\
+\
+&#x20;       \<div id="statusBanner" class="status-banner">\</div>\
+&#x20;     \</form>\
+&#x20;   \</section>\
+&#x20; \</main>\
+\
+&#x20; \<footer>\
+&#x20;   \<p>Coleta Meteorológica · Interface independente integrada ao Google Forms.\</p>\
+&#x20;   \<a href="https\://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/viewform" target="\_blank" rel="noopener noreferrer">Abrir formulário original ↗\</a>\
+&#x20; \</footer>\
+\
   <script>
-    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/formResponse";
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/formResponse";
 
-    const form = document.getElementById("geoForm");
-    const inputLocal = document.getElementById("local");
-    const inputLat = document.getElementById("latitude");
-    const inputLng = document.getElementById("longitude");
-    const btnGps = document.getElementById("btnGps");
-    const gpsStatusText = document.getElementById("gpsStatusText");
-    const previewText = document.getElementById("previewText");
-    const mapLink = document.getElementById("mapLink");
-    const btnSubmit = document.getElementById("btnSubmit");
-    const statusBanner = document.getElementById("statusBanner");
+const form = document.getElementById("geoForm");
+const inputLocal = document.getElementById("local");
+const inputLat = document.getElementById("latitude");
+const inputLng = document.getElementById("longitude");
+const btnGps = document.getElementById("btnGps");
+const gpsStatusText = document.getElementById("gpsStatusText");
+const previewText = document.getElementById("previewText");
+const mapLink = document.getElementById("mapLink");
+const btnSubmit = document.getElementById("btnSubmit");
+const statusBanner = document.getElementById("statusBanner");
 
-    function parseCoord(val) {
-      if (!val) return NaN;
-      return parseFloat(val.trim().replace(",", "."));
+let enviando = false;
+let temporizadorBusca;
+
+function parseCoord(valor) {
+    valor = valor.trim();
+
+    if (!/^-?\d+(?:[.,]\d+)?$/.test(valor)) {
+        return NaN;
     }
 
-    function updatePreview() {
-      const lat = parseCoord(inputLat.value);
-      const lng = parseCoord(inputLng.value);
+    return Number(valor.replace(",", "."));
+}
 
-      const isLatValid = !isNaN(lat) && lat >= -90 && lat <= 90;
-      const isLngValid = !isNaN(lng) && lng >= -180 && lng <= 180;
+function updatePreview() {
+    const lat = parseCoord(inputLat.value);
+    const lng = parseCoord(inputLng.value);
 
-      if (isLatValid && isLngValid) {
-        const formattedLat = lat.toFixed(6);
-        const formattedLng = lng.toFixed(6);
-        previewText.textContent = `${formattedLat}, ${formattedLng}`;
+    const valido =
+        Number.isFinite(lat) &&
+        Number.isFinite(lng) &&
+        lat >= -90 && lat <= 90 &&
+        lng >= -180 && lng <= 180;
+
+    if (valido) {
+        previewText.textContent =
+            `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
         previewText.classList.add("valid");
-        mapLink.href = `https://www.google.com/maps?q=${formattedLat},${formattedLng}`;
+
+        mapLink.href =
+            `https://www.google.com/maps?q=${lat},${lng}`;
+
         mapLink.classList.add("active");
-      } else {
-        previewText.textContent = "Aguardando coordenadas válidas...";
+    } else {
+        previewText.textContent =
+            "Aguardando coordenadas válidas...";
+
         previewText.classList.remove("valid");
         mapLink.href = "#";
         mapLink.classList.remove("active");
-      }
-
-      return { isLatValid, isLngValid, lat, lng };
     }
 
-    inputLat.addEventListener("input", updatePreview);
-    inputLng.addEventListener("input", updatePreview);
+    return { lat, lng, valido };
+}
 
-    // Captura por GPS ao clicar
-    btnGps.addEventListener("click", () => {
-      if (!("geolocation" in navigator)) {
-        gpsStatusText.textContent = "Seu navegador não suporta geolocalização.";
-        gpsStatusText.style.color = "#fca5a5";
+// Atualizar prévia
+inputLat.addEventListener("input", updatePreview);
+inputLng.addEventListener("input", updatePreview);
+
+// Buscar coordenadas pelo nome
+inputLocal.addEventListener("input", () => {
+
+    clearTimeout(temporizadorBusca);
+
+    inputLat.value = "";
+    inputLng.value = "";
+    updatePreview();
+
+    const nome = inputLocal.value.trim();
+
+    if (nome.length < 3) {
+        gpsStatusText.textContent =
+            "Digite pelo menos 3 letras para buscar.";
         return;
-      }
+    }
 
-      btnGps.disabled = true;
-      btnGps.textContent = "Localizando...";
-      gpsStatusText.textContent = "Solicitando permissão e buscando sinal de satélite...";
-      gpsStatusText.style.color = "#46e5b7";
+    temporizadorBusca = setTimeout(async () => {
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          inputLat.value = position.coords.latitude.toFixed(6);
-          inputLng.value = position.coords.longitude.toFixed(6);
+        gpsStatusText.textContent =
+            "Buscando localização...";
 
-          btnGps.disabled = false;
-          btnGps.textContent = "Atualizar localização";
-          gpsStatusText.textContent = `Coordenadas preenchidas com precisão aproximada de ${Math.round(position.coords.accuracy)} metros.`;
-          gpsStatusText.style.color = "#8ba3ab";
-          updatePreview();
-        },
-        (error) => {
-          btnGps.disabled = false;
-          btnGps.textContent = "Usar minha localização";
-          gpsStatusText.style.color = "#fca5a5";
+        try {
+            const url =
+                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nome)}&count=10&language=pt&format=json`;
 
-          if (error.code === error.PERMISSION_DENIED) {
-            gpsStatusText.textContent = "Permissão negada. Digite as coordenadas manualmente ou libere o GPS no navegador.";
-          } else {
-            gpsStatusText.textContent = "Não foi possível obter o GPS agora. Tente novamente ou digite manualmente.";
-          }
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 12000,
-          maximumAge: 0
+            const resposta = await fetch(url);
+
+            if (!resposta.ok) {
+                throw new Error("Erro na consulta");
+            }
+
+            const dados = await resposta.json();
+
+            if (!dados.results || dados.results.length === 0) {
+                gpsStatusText.textContent =
+                    "Local não encontrado.";
+                return;
+            }
+
+            const local =
+                dados.results.find(item =>
+                    item.country_code === "BR"
+                ) || dados.results[0];
+
+            if (inputLocal.value.trim() !== nome) return;
+
+            inputLat.value = local.latitude.toFixed(6);
+            inputLng.value = local.longitude.toFixed(6);
+
+            gpsStatusText.textContent =
+                `Encontrado: ${local.name} - ${local.admin1 || local.country}. Confira as coordenadas.`;
+
+            updatePreview();
+
+        } catch (erro) {
+            gpsStatusText.textContent =
+                "Erro ao buscar localização.";
         }
-      );
-    });
 
-    // Envio direto para o Google Forms
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      statusBanner.className = "status-banner";
+    }, 700);
+});
 
-      const localVal = inputLocal.value.trim();
-      const { isLatValid, isLngValid, lat, lng } = updatePreview();
+// Capturar GPS
+btnGps.addEventListener("click", () => {
 
-      if (!localVal) {
-        statusBanner.textContent = "Por favor, informe o Nome do local antes de enviar.";
-        statusBanner.className = "status-banner error";
-        inputLocal.focus();
+    if (!navigator.geolocation) {
+        gpsStatusText.textContent =
+            "Navegador sem suporte a GPS.";
         return;
-      }
+    }
 
-      if (!isLatValid || !isLngValid) {
-        statusBanner.textContent = "Informe coordenadas válidas ou clique em 'Usar minha localização'.";
+    btnGps.disabled = true;
+    btnGps.textContent = "Localizando...";
+
+    navigator.geolocation.getCurrentPosition(
+
+        position => {
+
+            inputLat.value =
+                position.coords.latitude.toFixed(6);
+
+            inputLng.value =
+                position.coords.longitude.toFixed(6);
+
+            btnGps.disabled = false;
+            btnGps.textContent = "Atualizar localização";
+
+            gpsStatusText.textContent =
+                "Localização GPS obtida com sucesso.";
+
+            updatePreview();
+        },
+
+        error => {
+
+            btnGps.disabled = false;
+            btnGps.textContent = "Usar minha localização";
+
+            gpsStatusText.textContent =
+                "Não foi possível obter o GPS. Verifique a permissão.";
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+    );
+});
+
+// Enviar para Google Forms
+form.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    if (enviando) return;
+
+    const nome = inputLocal.value.trim();
+    const { lat, lng, valido } = updatePreview();
+
+    if (nome.length < 2) {
+        statusBanner.textContent =
+            "Informe o nome do local.";
+
         statusBanner.className = "status-banner error";
         return;
-      }
+    }
 
-      btnSubmit.disabled = true;
-      btnSubmit.textContent = "Enviando registro...";
+    if (!valido) {
+        statusBanner.textContent =
+            "Informe coordenadas válidas.";
 
-      const formData = new URLSearchParams();
-      formData.append("entry.346371602", localVal);
-      formData.append("entry.260018039", lat.toFixed(6));
-      formData.append("entry.1955144794", lng.toFixed(6));
+        statusBanner.className = "status-banner error";
+        return;
+    }
 
-      try {
+    if (lat < -35 || lat > 6 || lng < -75 || lng > -30) {
+        if (!confirm("As coordenadas estão fora da área aproximada do Brasil. Deseja continuar?")) {
+            return;
+        }
+    }
+
+    enviando = true;
+
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "Enviando...";
+
+    const dados = new URLSearchParams();
+
+    dados.append("entry.346371602", nome);
+    dados.append("entry.260018039", lat.toFixed(6));
+    dados.append("entry.1955144794", lng.toFixed(6));
+
+    try {
+
         await fetch(GOOGLE_FORM_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: formData.toString()
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+                "Content-Type":
+                    "application/x-www-form-urlencoded"
+            },
+            body: dados.toString()
         });
 
-        statusBanner.textContent = "✓ Registro enviado com sucesso para o Google Forms!";
+        statusBanner.textContent =
+            "Solicitação enviada! Confira a planilha para confirmar o registro.";
+
         statusBanner.className = "status-banner success";
-        inputLocal.value = "";
-      } catch (err) {
-        statusBanner.textContent = "Erro de conexão ao enviar os dados. Verifique sua internet.";
+
+        form.reset();
+        updatePreview();
+
+        gpsStatusText.textContent =
+            "Informe outro local ou utilize o GPS.";
+
+    } catch (erro) {
+
+        statusBanner.textContent =
+            "Erro ao enviar. Verifique sua conexão.";
+
         statusBanner.className = "status-banner error";
-      } finally {
+
+    } finally {
+
+        enviando = false;
         btnSubmit.disabled = false;
-        btnSubmit.textContent = "Enviar registro ao Google Forms →";
-      }
-    });
-  </script>
-</body>
-</html>
+
+        btnSubmit.textContent =
+            "Enviar registro ao Google Forms →";
+    }
+});
+
+updatePreview();
+</script>
+\
+\</body>\
+\</html>\
