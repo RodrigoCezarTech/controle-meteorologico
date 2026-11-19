@@ -1,1074 +1,1307 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coleta Meteorológica — Registro Geográfico</title>
-  <style>
-    :root {
-      --bg-main: #071318;
-      --bg-gradient: radial-gradient(circle at 25% 45%, #0e2a33 0%, #071318 65%);
-      --card-bg: #0c1c22;
-      --card-inner: #08151a;
-      --border-subtle: #18323b;
-      --border-focus: #46e5b7;
-      --text-primary: #f1f7f9;
-      --text-secondary: #8ba3ab;
-      --text-muted: #5a747d;
-      --accent: #46e5b7;
-      --accent-hover: #35cfa3;
-      --accent-text: #041e18;
-      --accent-glow: rgba(70, 229, 183, 0.15);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-main);
-      background-image: var(--bg-gradient);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 1.75rem 2rem;
-    }
-
-    header {
-      max-width: 1140px;
-      width: 100%;
-      margin: 0 auto 3rem auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
-
-    .brand-logo {
-      width: 38px;
-      height: 38px;
-      background-color: var(--accent);
-      color: var(--accent-text);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
-
-    .brand-info strong {
-      display: block;
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .brand-info span {
-      display: block;
-      font-size: 0.68rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-top: 2px;
-    }
-
-    .privacy-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background-color: rgba(12, 28, 34, 0.85);
-      border: 1px solid var(--border-subtle);
-      padding: 0.45rem 0.95rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    .privacy-pill::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background-color: var(--accent);
-      box-shadow: 0 0 8px var(--accent);
-    }
-
-    main {
-      max-width: 1140px;
-      width: 100%;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 4rem;
-      align-items: center;
-    }
-
-    @media (max-width: 960px) {
-      main {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-      }
-      body {
-        padding: 1.25rem;
-      }
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.65rem;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--accent);
-      margin-bottom: 1.25rem;
-    }
-
-    .eyebrow::before {
-      content: "";
-      width: 24px;
-      height: 1.5px;
-      background-color: var(--accent);
-    }
-
-    .hero-title {
-      font-size: clamp(2.3rem, 4vw, 3.35rem);
-      line-height: 1.08;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.25rem;
-    }
-
-    .hero-title em {
-      font-style: italic;
-      font-weight: 700;
-      color: var(--accent);
-      font-family: Georgia, "Times New Roman", serif;
-    }
-
-    .hero-desc {
-      color: var(--text-secondary);
-      font-size: 0.98rem;
-      line-height: 1.65;
-      max-width: 480px;
-      margin-bottom: 2.25rem;
-    }
-
-    .globe-wrapper {
-      position: relative;
-      width: 230px;
-      height: 230px;
-      margin: 0.5rem 0 2.5rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .globe-svg {
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-
-    .globe-tag {
-      position: absolute;
-      right: -65px;
-      top: 42%;
-      background-color: rgba(10, 26, 32, 0.92);
-      border: 1px solid var(--border-subtle);
-      padding: 0.35rem 0.7rem;
-      border-radius: 6px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      white-space: nowrap;
-    }
-
-    .globe-tag span {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: var(--accent);
-    }
-
-    @keyframes pulseRing {
-      0% { transform: scale(0.8); opacity: 0.9; }
-      100% { transform: scale(2.4); opacity: 0; }
-    }
-
-    .pulse-circle {
-      transform-origin: 145px 96px;
-      animation: pulseRing 2.4s infinite ease-out;
-    }
-
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 1.15rem;
-    }
-
-    .step {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.95rem;
-    }
-
-    .step-badge {
-      width: 28px;
-      height: 28px;
-      border-radius: 7px;
-      background-color: rgba(70, 229, 183, 0.08);
-      border: 1px solid rgba(70, 229, 183, 0.25);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .step strong {
-      display: block;
-      font-size: 0.92rem;
-      color: var(--text-primary);
-      margin-bottom: 0.15rem;
-    }
-
-    .step p {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-    }
-
-    .form-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      padding: 2rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55);
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.65rem;
-    }
-
-    .card-top .tag {
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-    }
-
-    .card-top .req-note {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
-
-    .form-card h2 {
-      font-size: 1.45rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.45rem;
-    }
-
-    .card-subtitle {
-      font-size: 0.84rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 1.65rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.35rem;
-    }
-
-    label.field-label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.45rem;
-    }
-
-    label.field-label span {
-      color: var(--accent);
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .input-icon {
-      position: absolute;
-      left: 0.9rem;
-      color: var(--text-muted);
-      pointer-events: none;
-      display: flex;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      background-color: var(--card-inner);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 0.78rem 0.95rem;
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    input[type="text"].with-icon {
-      padding-left: 2.5rem;
-    }
-
-    input[type="text"]::placeholder {
-      color: var(--text-muted);
-    }
-
-    input[type="text"]:focus {
-      outline: none;
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .helper-text {
-      display: block;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      margin-top: 0.4rem;
-    }
-
-    .gps-box {
-      background-color: var(--card-inner);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1.35rem;
-    }
-
-    .gps-box-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.65rem;
-    }
-
-    .gps-info {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.65rem;
-    }
-
-    .gps-icon-circle {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background-color: rgba(70, 229, 183, 0.1);
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .gps-info strong {
-      display: block;
-      font-size: 0.84rem;
-      color: var(--text-primary);
-    }
-
-    .gps-info span {
-      display: block;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      line-height: 1.35;
-    }
-
-    .btn-gps {
-      background-color: rgba(70, 229, 183, 0.08);
-      border: 1px solid rgba(70, 229, 183, 0.35);
-      color: var(--accent);
-      padding: 0.5rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .btn-gps:hover:not(:disabled) {
-      background-color: rgba(70, 229, 183, 0.18);
-    }
-
-    .btn-gps:disabled {
-      opacity: 0.5;
-      cursor: wait;
-    }
-
-    .gps-box-footer {
-      border-top: 1px solid rgba(24, 50, 59, 0.6);
-      padding-top: 0.55rem;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-    }
-
-    .coords-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.85rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .preview-box {
-      background-color: var(--card-inner);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 1.35rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .preview-box small {
-      display: block;
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .preview-value {
-      font-size: 0.85rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      color: var(--text-secondary);
-    }
-
-    .preview-value.valid {
-      color: var(--accent);
-    }
-
-    .map-link {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-decoration: none;
-      pointer-events: none;
-      transition: color 0.2s;
-      white-space: nowrap;
-    }
-
-    .map-link.active {
-      color: var(--accent);
-      pointer-events: auto;
-    }
-
-    .map-link.active:hover {
-      text-decoration: underline;
-    }
-
-    .btn-submit {
-      width: 100%;
-      background-color: var(--accent);
-      color: var(--accent-text);
-      border: none;
-      border-radius: 10px;
-      padding: 0.92rem 1.25rem;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s, opacity 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .btn-submit:hover:not(:disabled) {
-      background-color: var(--accent-hover);
-    }
-
-    .btn-submit:active:not(:disabled) {
-      transform: scale(0.99);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-
-    .submit-note {
-      text-align: center;
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 0.75rem;
-      line-height: 1.4;
-    }
-
-    .status-banner {
-      margin-top: 1rem;
-      padding: 0.85rem;
-      border-radius: 8px;
-      font-size: 0.84rem;
-      text-align: center;
-      white-space: pre-line;
-      display: none;
-    }
-
-    .status-banner.success {
-      display: block;
-      background-color: rgba(70, 229, 183, 0.12);
-      border: 1px solid rgba(70, 229, 183, 0.35);
-      color: var(--accent);
-    }
-
-    .status-banner.error {
-      display: block;
-      background-color: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      color: #fca5a5;
-    }
-
-    .status-banner.loading {
-      display: block;
-      background-color: rgba(59, 130, 246, 0.12);
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      color: #bfdbfe;
-    }
-
-    .status-banner.warning {
-      display: block;
-      background-color: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      color: #fcd34d;
-    }
-
-    footer {
-      max-width: 1140px;
-      width: 100%;
-      margin: 3.5rem auto 0 auto;
-      padding-top: 1.25rem;
-      border-top: 1px solid rgba(24, 50, 59, 0.6);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    footer a {
-      color: var(--text-secondary);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      transition: color 0.2s;
-    }
-
-    footer a:hover {
-      color: var(--accent);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Coleta Meteorológica — Registro Geográfico</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root {
+  --bg-main:#071318;
+  --card-bg:#0c1c22;
+  --card-inner:#08151a;
+  --border:#18323b;
+  --accent:#46e5b7;
+  --text:#f1f7f9;
+  --secondary:#8ba3ab;
+}
+
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial, sans-serif;
+}
+
+body {
+  background:radial-gradient(circle at 25% 45%,#0e2a33,#071318 65%);
+  color:var(--text);
+  min-height:100vh;
+  padding:25px;
+}
+
+header,main,footer {
+  max-width:1140px;
+  width:100%;
+  margin:auto;
+}
+
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:15px;
+  margin-bottom:45px;
+}
+
+.brand {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo {
+  background:var(--accent);
+  color:#041e18;
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  font-size:22px;
+}
+
+.brand strong {
+  font-size:17px;
+}
+
+.brand small {
+  display:block;
+  color:var(--secondary);
+  font-size:11px;
+  margin-top:4px;
+  letter-spacing:2px;
+}
+
+.privacy {
+  border:1px solid var(--border);
+  border-radius:30px;
+  padding:10px 15px;
+  color:var(--secondary);
+  font-size:12px;
+}
+
+main {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:45px;
+  align-items:start;
+}
+
+.eyebrow {
+  color:var(--accent);
+  font-size:12px;
+  letter-spacing:3px;
+  margin-bottom:20px;
+}
+
+h1 {
+  font-size:clamp(35px,5vw,55px);
+  line-height:1.1;
+  margin-bottom:20px;
+}
+
+h1 em {
+  color:var(--accent);
+  font-family:Georgia,serif;
+}
+
+.description {
+  color:var(--secondary);
+  line-height:1.7;
+  max-width:470px;
+  margin-bottom:35px;
+}
+
+.steps {
+  display:grid;
+  gap:22px;
+  margin-top:35px;
+}
+
+.step {
+  display:flex;
+  gap:15px;
+}
+
+.badge {
+  min-width:30px;
+  height:30px;
+  background:#12342e;
+  color:var(--accent);
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+}
+
+.step p {
+  color:var(--secondary);
+  font-size:13px;
+  margin-top:5px;
+}
+
+.card {
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 20px 45px #0006;
+}
+
+.card-label {
+  color:var(--accent);
+  font-size:11px;
+  letter-spacing:2px;
+  margin-bottom:15px;
+}
+
+.card h2 {
+  margin-bottom:10px;
+  font-size:23px;
+}
+
+.subtitle {
+  color:var(--secondary);
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:25px;
+}
+
+.form-group {
+  margin-bottom:20px;
+}
+
+label {
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+label span {
+  color:var(--accent);
+}
+
+input {
+  width:100%;
+  padding:13px;
+  background:var(--card-inner);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:white;
+  outline:none;
+  font-size:14px;
+}
+
+input:focus {
+  border-color:var(--accent);
+}
+
+.helper {
+  color:#66808a;
+  font-size:11px;
+  margin-top:6px;
+  display:block;
+}
+
+.gps-box {
+  background:var(--card-inner);
+  border:1px solid var(--border);
+  padding:16px;
+  border-radius:12px;
+  margin-bottom:22px;
+}
+
+.gps-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.gps-top p {
+  color:var(--secondary);
+  font-size:12px;
+  margin-top:5px;
+}
+
+button {
+  cursor:pointer;
+  border:none;
+  border-radius:9px;
+  padding:12px 15px;
+  font-weight:bold;
+  transition:.2s;
+}
+
+.btn-gps {
+  background:#123b32;
+  border:1px solid #286d59;
+  color:var(--accent);
+}
+
+button:hover:not(:disabled) {
+  filter:brightness(1.2);
+}
+
+button:disabled {
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.gps-status {
+  font-size:11px;
+  color:var(--secondary);
+  margin-top:12px;
+}
+
+.coords {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.preview {
+  background:var(--card-inner);
+  border:1px solid var(--border);
+  padding:15px;
+  border-radius:10px;
+  margin:20px 0;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.preview small {
+  color:var(--secondary);
+  display:block;
+  margin-bottom:7px;
+}
+
+.preview strong {
+  color:var(--accent);
+  font-size:13px;
+}
+
+.map-link {
+  color:var(--accent);
+  text-decoration:none;
+  font-size:12px;
+}
+
+.map-container {
+  display:none;
+  margin-bottom:20px;
+}
+
+.map-container h3 {
+  font-size:14px;
+  margin-bottom:12px;
+}
+
+iframe {
+  width:100%;
+  height:260px;
+  border:0;
+  border-radius:12px;
+}
+
+.weather-box {
+  display:none;
+  background:var(--card-inner);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:15px;
+  margin-bottom:20px;
+}
+
+.weather-box strong {
+  color:var(--accent);
+  font-size:24px;
+}
+
+.weather-box p {
+  color:var(--secondary);
+  font-size:12px;
+  margin-top:5px;
+}
+
+.btn-submit {
+  background:var(--accent);
+  color:#041e18;
+  width:100%;
+  padding:16px;
+  font-size:14px;
+}
+
+.extra-actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
+
+.extra-actions button {
+  background:#12342e;
+  border:1px solid #286d59;
+  color:var(--accent);
+  font-size:12px;
+}
+
+.status {
+  display:none;
+  margin-top:18px;
+  padding:14px;
+  border-radius:9px;
+  font-size:13px;
+  line-height:1.6;
+  white-space:pre-line;
+}
+
+.success {
+  display:block;
+  background:#12382d;
+  color:var(--accent);
+}
+
+.error {
+  display:block;
+  background:#401d25;
+  color:#ffaaaa;
+}
+
+.loading {
+  display:block;
+  background:#142d45;
+  color:#bfdbfe;
+}
+
+.warning {
+  display:block;
+  background:#42351a;
+  color:#fcd34d;
+}
+
+.note {
+  text-align:center;
+  color:#66808a;
+  font-size:11px;
+  margin-top:13px;
+  line-height:1.5;
+}
+
+footer {
+  border-top:1px solid var(--border);
+  padding-top:20px;
+  margin-top:50px;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:15px;
+  color:var(--secondary);
+  font-size:12px;
+}
+
+footer a {
+  color:var(--accent);
+}
+
+@media(max-width:900px) {
+  main {
+    grid-template-columns:1fr;
+    gap:35px;
+  }
+}
+
+@media(max-width:500px) {
+  body {
+    padding:17px;
+  }
+
+  .card {
+    padding:20px;
+  }
+
+  .coords {
+    grid-template-columns:1fr;
+  }
+
+  .extra-actions {
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
+
 <body>
 
-  <header>
-    <div class="brand">
-      <div class="brand-logo" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-        </svg>
-      </div>
-      <div class="brand-info">
-        <strong>Coleta Meteorológica</strong>
-        <span>Registro Geográfico</span>
+<header>
+
+  <div class="brand">
+    <div class="logo">☁</div>
+    <div>
+      <strong>Coleta Meteorológica</strong>
+      <small>REGISTRO GEOGRÁFICO</small>
+    </div>
+  </div>
+
+  <div class="privacy">
+    ● Localização somente com permissão
+  </div>
+
+</header>
+
+<main>
+
+<section>
+
+  <div class="eyebrow">LOCALIZAÇÃO & DADOS</div>
+
+  <h1>
+    Cada ponto<br>
+    conta uma<br>
+    <em>história do clima.</em>
+  </h1>
+
+  <p class="description">
+    Registre um local de coleta meteorológica com suas coordenadas
+    geográficas. Utilize o GPS do dispositivo ou informe os dados
+    manualmente.
+  </p>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="badge">01</div>
+      <div>
+        <strong>Identifique o local</strong>
+        <p>Informe o nome do ponto de coleta.</p>
       </div>
     </div>
-    <div class="privacy-pill">Localização somente com permissão</div>
-  </header>
 
-  <main>
-    <section>
-      <div class="eyebrow">Localização &amp; Dados</div>
-      <h1 class="hero-title">
-        Cada ponto<br>
-        conta uma<br>
-        <em>história do clima.</em>
-      </h1>
-      <p class="hero-desc">
-        Registre um local de coleta meteorológica com suas coordenadas geográficas. Você pode preencher tudo manualmente ou usar a localização do dispositivo, se autorizar.
-      </p>
-
-      <div class="globe-wrapper" aria-hidden="true">
-        <svg class="globe-svg" viewBox="0 0 220 220" fill="none">
-          <defs>
-            <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#46e5b7" stop-opacity="0.16"/>
-              <stop offset="75%" stop-color="#0e2a33" stop-opacity="0.06"/>
-              <stop offset="100%" stop-color="#071318" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-          <circle cx="110" cy="110" r="105" fill="url(#globeGlow)"/>
-          <circle cx="110" cy="110" r="82" stroke="#1e424d" stroke-width="1.2"/>
-          <ellipse cx="110" cy="110" rx="42" ry="82" stroke="#183640" stroke-width="1"/>
-          <ellipse cx="110" cy="110" rx="68" ry="82" stroke="#183640" stroke-width="1"/>
-          <ellipse cx="110" cy="110" rx="82" ry="30" stroke="#183640" stroke-width="1"/>
-          <ellipse cx="110" cy="110" rx="82" ry="60" stroke="#183640" stroke-width="1"/>
-          <line x1="28" y1="110" x2="192" y2="110" stroke="#224b57" stroke-width="1" stroke-dasharray="3 3"/>
-          <line x1="110" y1="28" x2="110" y2="192" stroke="#224b57" stroke-width="1" stroke-dasharray="3 3"/>
-          <circle class="pulse-circle" cx="145" cy="96" r="8" stroke="#46e5b7" stroke-width="1.5"/>
-          <circle cx="145" cy="96" r="4.5" fill="#46e5b7"/>
-        </svg>
-        <div class="globe-tag"><span></span>PONTO GEOGRÁFICO</div>
+    <div class="step">
+      <div class="badge">02</div>
+      <div>
+        <strong>Adicione a posição</strong>
+        <p>Digite latitude e longitude ou utilize o GPS.</p>
       </div>
+    </div>
 
-      <div class="steps">
-        <div class="step">
-          <div class="step-badge">01</div>
-          <div>
-            <strong>Identifique o local</strong>
-            <p>Informe o nome do ponto de coleta.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-badge">02</div>
-          <div>
-            <strong>Adicione a posição</strong>
-            <p>Digite latitude e longitude ou autorize o GPS.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-badge">03</div>
-          <div>
-            <strong>Envie o registro</strong>
-            <p>Os dados são gravados diretamente no Google Forms.</p>
-          </div>
-        </div>
+    <div class="step">
+      <div class="badge">03</div>
+      <div>
+        <strong>Consulte o clima</strong>
+        <p>Obtenha a temperatura atual pela API meteorológica.</p>
       </div>
-    </section>
+    </div>
 
-    <section class="form-card">
-      <div class="card-top">
-        <span class="tag">Novo Registro</span>
-        <span class="req-note">* Campos obrigatórios</span>
+    <div class="step">
+      <div class="badge">04</div>
+      <div>
+        <strong>Envie o registro</strong>
+        <p>Integração com Google Forms e planilha de respostas.</p>
       </div>
-      <h2>Dados do ponto de coleta</h2>
-      <p class="card-subtitle">
-        Os dados preenchidos serão enviados ao formulário “Coleta de dados - meteorológicos”.
-      </p>
+    </div>
 
-      <form id="geoForm" novalidate>
-        <div class="form-group">
-          <label class="field-label" for="local">Nome do local <span>*</span></label>
-          <div class="input-wrapper">
-            <span class="input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            </span>
-            <input
-              type="text"
-              id="local"
-              name="entry.346371602"
-              class="with-icon"
-              placeholder="Ex: Estação de Cotia"
-              required
-            >
-          </div>
-          <small class="helper-text">Digite o nome do local ou preencha as coordenadas diretamente.</small>
+  </div>
+
+</section>
+
+<section class="card">
+
+  <div class="card-label">NOVO REGISTRO</div>
+
+  <h2>Dados do ponto de coleta</h2>
+
+  <p class="subtitle">
+    Preencha os dados abaixo para registrar uma nova localização.
+  </p>
+
+  <form id="geoForm" novalidate>
+
+    <div class="form-group">
+
+      <label for="local">Nome do local <span>*</span></label>
+
+      <input
+        type="text"
+        id="local"
+        placeholder="Ex: Estação de Campinas"
+        required
+      >
+
+      <small class="helper">
+        Digite o município ou nome do ponto de coleta.
+      </small>
+
+    </div>
+
+    <div class="gps-box">
+
+      <div class="gps-top">
+
+        <div>
+          <strong>📍 Preenchimento por GPS</strong>
+          <p>Utilize a localização do dispositivo.</p>
         </div>
 
-        <div class="gps-box">
-          <div class="gps-box-top">
-            <div class="gps-info">
-              <div class="gps-icon-circle">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="3"/>
-                  <path d="M12 2v3m0 14v3M2 12h3m14 0h3"/>
-                </svg>
-              </div>
-              <div>
-                <strong>Preenchimento por GPS</strong>
-                <span>Acessamos sua posição apenas se você clicar e autorizar.</span>
-              </div>
-            </div>
-            <button type="button" id="btnGps" class="btn-gps">Usar minha localização</button>
-          </div>
-          <div class="gps-box-footer" id="gpsStatusText">
-            Você também pode informar as coordenadas manualmente.
-          </div>
-        </div>
-
-        <div class="coords-grid">
-          <div>
-            <label class="field-label" for="latitude">Latitude <span>*</span></label>
-            <input
-              type="text"
-              id="latitude"
-              name="entry.260018039"
-              placeholder="Ex: -23.603500"
-              inputmode="decimal"
-              required
-            >
-            <small class="helper-text">De -90 até 90. Aceita vírgula ou ponto.</small>
-          </div>
-
-          <div>
-            <label class="field-label" for="longitude">Longitude <span>*</span></label>
-            <input
-              type="text"
-              id="longitude"
-              name="entry.1955144794"
-              placeholder="Ex: -46.919500"
-              inputmode="decimal"
-              required
-            >
-            <small class="helper-text">De -180 até 180. Aceita vírgula ou ponto.</small>
-          </div>
-        </div>
-
-        <div class="preview-box">
-          <div>
-            <small>Prévia das Coordenadas</small>
-            <div id="previewText" class="preview-value">Aguardando coordenadas válidas...</div>
-          </div>
-          <a id="mapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer">Ver no mapa ↗</a>
-        </div>
-
-        <button type="submit" id="btnSubmit" class="btn-submit">
-
-<!-- Mapa integrado -->
-<div class="map-container" id="mapContainer" style="display:none;">
-  <h3>📍 Localização do ponto de coleta</h3>
-  <iframe
-    id="mapFrame"
-    width="100%"
-    height="280"
-    style="border:0; border-radius:12px;"
-    loading="lazy"
-    allowfullscreen
-    referrerpolicy="no-referrer-when-downgrade">
-  </iframe>
-</div>
-
-<!-- Ações adicionais -->
-<div class="extra-actions">
-  <button type="button" id="btnPDF" disabled>
-    📄 Gerar relatório PDF
-  </button>
-
-  <button type="button" id="btnShare" disabled>
-    📲 Compartilhar registro
-  </button>
-</div>
-
-          
-          Enviar registro ao Google Forms →
+        <button type="button" id="btnGps" class="btn-gps">
+          Usar minha localização
         </button>
 
-        <p class="submit-note">
-          O envio é realizado diretamente para a planilha integrada ao formulário sem sair desta página.
-        </p>
+      </div>
 
-        <div id="statusBanner" class="status-banner" role="status" aria-live="polite" aria-atomic="true"></div>
-      </form>
-    </section>
-  </main>
+      <div id="gpsStatus" class="gps-status">
+        Aguardando localização.
+      </div>
 
-  <footer>
-    <p>Coleta Meteorológica · Interface independente integrada ao Google Forms.</p>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/viewform" target="_blank" rel="noopener noreferrer">Abrir formulário original ↗</a>
-  </footer>
+    </div>
 
-  <script>
-    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/formResponse";
+    <div class="coords">
 
-    const form = document.getElementById("geoForm");
-    const inputLocal = document.getElementById("local");
-    const inputLat = document.getElementById("latitude");
-    const inputLng = document.getElementById("longitude");
-    const btnGps = document.getElementById("btnGps");
-    const gpsStatusText = document.getElementById("gpsStatusText");
-    const previewText = document.getElementById("previewText");
-    const mapLink = document.getElementById("mapLink");
-    const btnSubmit = document.getElementById("btnSubmit");
-    const statusBanner = document.getElementById("statusBanner");
+      <div class="form-group">
 
-    let enviando = false;
-    let temporizadorBusca = null;
-    let origemCoordenadas = "manual"; // "manual" | "auto" | "gps"
+        <label for="latitude">Latitude <span>*</span></label>
 
-    function parseCoord(valor) {
-      const limpo = valor.trim();
-      if (!/^-?\d+(?:[.,]\d+)?$/.test(limpo)) {
-        return NaN;
-      }
-      return Number(limpo.replace(",", "."));
-    }
+        <input
+          type="text"
+          id="latitude"
+          placeholder="-22.905600"
+          inputmode="decimal"
+          required
+        >
 
-    function updatePreview() {
-      const lat = parseCoord(inputLat.value);
-      const lng = parseCoord(inputLng.value);
+        <small class="helper">Entre -90 e 90.</small>
 
-      const valido =
-        Number.isFinite(lat) &&
-        Number.isFinite(lng) &&
-        lat >= -90 && lat <= 90 &&
-        lng >= -180 && lng <= 180;
+      </div>
 
-      if (valido) {
-        previewText.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-        previewText.classList.add("valid");
-        mapLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
-        mapLink.classList.add("active");
-        document.getElementById("mapFrame").src =
-  `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+      <div class="form-group">
 
-document.getElementById("mapContainer").style.display = "block";
+        <label for="longitude">Longitude <span>*</span></label>
 
-document.getElementById("btnPDF").disabled = false;
-document.getElementById("btnShare").disabled = false;
-      } else {
-        previewText.textContent = "Aguardando coordenadas válidas...";
-        previewText.classList.remove("valid");
-        mapLink.href = "#";
-        mapLink.classList.remove("active");
-        document.getElementById("mapContainer").style.display = "none";
+        <input
+          type="text"
+          id="longitude"
+          placeholder="-47.060800"
+          inputmode="decimal"
+          required
+        >
 
-document.getElementById("btnPDF").disabled = true;
-document.getElementById("btnShare").disabled = true;
-      }
+        <small class="helper">Entre -180 e 180.</small>
 
-      return { lat, lng, valido };
-    }
+      </div>
 
-    inputLat.addEventListener("input", () => {
-      origemCoordenadas = "manual";
-      updatePreview();
-    });
+    </div>
 
-    inputLng.addEventListener("input", () => {
-      origemCoordenadas = "manual";
-      updatePreview();
-    });
+    <div class="preview">
 
-    inputLocal.addEventListener("input", () => {
-      clearTimeout(temporizadorBusca);
+      <div>
+        <small>PRÉVIA DAS COORDENADAS</small>
+        <strong id="previewText">
+          Aguardando coordenadas...
+        </strong>
+      </div>
 
-      const nome = inputLocal.value.trim();
+      <a
+        id="mapLink"
+        class="map-link"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Ver no mapa ↗
+      </a>
 
-      // Só limpa coordenadas se elas tiverem vindo de busca automática anterior
-      if (origemCoordenadas === "auto") {
-        inputLat.value = "";
-        inputLng.value = "";
-        updatePreview();
-      }
+    </div>
 
-      if (nome.length < 3) {
-        gpsStatusText.textContent = "Digite pelo menos 3 letras para buscar ou use o GPS.";
-        return;
-      }
+    <div class="weather-box" id="weatherBox">
 
-      temporizadorBusca = setTimeout(async () => {
-        // Não sobrescreve se o usuário já escolheu GPS ou digitou coordenadas manualmente
-        if (origemCoordenadas !== "auto" && (inputLat.value.trim() || inputLng.value.trim())) {
-          return;
-        }
+      <small>CONDIÇÕES METEOROLÓGICAS</small>
 
-        gpsStatusText.textContent = "Buscando localização...";
+      <p>Temperatura atual</p>
 
-        try {
-          const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nome)}&count=10&language=pt&format=json`;
-          const resposta = await fetch(url);
+      <strong id="temperature">-- °C</strong>
 
-          if (!resposta.ok) {
-            throw new Error("Erro na consulta");
-          }
+      <p id="weatherTime"></p>
 
-          const dados = await resposta.json();
+    </div>
 
-          if (!dados.results || dados.results.length === 0) {
-            gpsStatusText.textContent = "Local não encontrado. Preencha as coordenadas manualmente ou use o GPS.";
-            return;
-          }
+    <div class="map-container" id="mapContainer">
 
-          const local = dados.results.find(item => item.country_code === "BR") || dados.results[0];
+      <h3>📍 Localização do ponto de coleta</h3>
 
-          if (inputLocal.value.trim() !== nome) return;
+      <iframe
+        id="mapFrame"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Mapa do ponto de coleta"
+      ></iframe>
 
-          origemCoordenadas = "auto";
-          inputLat.value = local.latitude.toFixed(6);
-          inputLng.value = local.longitude.toFixed(6);
+    </div>
 
-          gpsStatusText.textContent = `Sugestão: ${local.name} - ${local.admin1 || local.country}. Confira antes de enviar.`;
-          updatePreview();
-        } catch (erro) {
-          gpsStatusText.textContent = "Não foi possível buscar automaticamente. Preencha manualmente ou use o GPS.";
-        }
-      }, 700);
-    });
+    <button type="submit" id="btnSubmit" class="btn-submit">
+      Enviar registro ao Google Forms →
+    </button>
 
-    btnGps.addEventListener("click", () => {
-      clearTimeout(temporizadorBusca);
+    <div class="extra-actions">
 
-      if (!navigator.geolocation) {
-        gpsStatusText.textContent = "Navegador sem suporte a GPS.";
-        return;
-      }
+      <button type="button" id="btnPDF" disabled>
+        📄 Gerar relatório PDF
+      </button>
 
-      btnGps.disabled = true;
-      btnGps.textContent = "Localizando...";
+      <button type="button" id="btnShare" disabled>
+        📲 Compartilhar registro
+      </button>
 
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          origemCoordenadas = "gps";
-          inputLat.value = position.coords.latitude.toFixed(6);
-          inputLng.value = position.coords.longitude.toFixed(6);
+    </div>
 
-          btnGps.disabled = false;
-          btnGps.textContent = "Atualizar localização";
-          gpsStatusText.textContent = "Localização GPS obtida com sucesso.";
-          updatePreview();
-        },
-        error => {
-          btnGps.disabled = false;
-          btnGps.textContent = "Usar minha localização";
-          gpsStatusText.textContent = "Não foi possível obter o GPS. Verifique a permissão do navegador.";
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 0
-        }
-      );
-    });
+    <p class="note">
+      Os registros são enviados ao Google Forms.
+      Consulte a planilha integrada para confirmar o recebimento.
+    </p>
 
-    function mostrarStatus(mensagem, tipo) {
-      statusBanner.textContent = mensagem;
-      statusBanner.className = `status-banner ${tipo}`;
-    }
+    <div id="status" class="status" role="status" aria-live="polite"></div>
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  </form>
 
-      if (enviando) return;
+</section>
 
-      const nome = inputLocal.value.trim();
-      const { lat, lng, valido } = updatePreview();
+</main>
 
-      if (nome.length < 2) {
-        mostrarStatus("Informe o nome do local antes de continuar.", "error");
-        inputLocal.focus();
-        return;
-      }
+<footer>
 
-      if (!valido) {
-        mostrarStatus("Coordenadas inválidas. Confira latitude e longitude (use ponto ou vírgula decimal).", "error");
-        (!Number.isFinite(lat) || lat < -90 || lat > 90 ? inputLat : inputLng).focus();
-        return;
-      }
+  <p>Coleta Meteorológica · Interface integrada ao Google Forms.</p>
 
-      enviando = true;
-      btnSubmit.disabled = true;
-      btnSubmit.textContent = "Consultando e enviando...";
-      mostrarStatus("⏳ Consultando as condições meteorológicas...", "loading");
+  <a
+    href="https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/viewform"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Abrir formulário original ↗
+  </a>
 
-      let resumoClima = "";
-      let avisoClima = "";
+</footer>
 
-      try {
-        // Consulta a temperatura atual na API Open-Meteo.
-        const climaUrl = new URL("https://api.open-meteo.com/v1/forecast");
-        climaUrl.search = new URLSearchParams({
-          latitude: lat,
-          longitude: lng,
-          current: "temperature_2m",
-          timezone: "auto"
-        }).toString();
+<script>
 
-        const respostaClima = await fetch(climaUrl);
-        if (!respostaClima.ok) throw new Error("A consulta meteorológica não respondeu corretamente.");
+const GOOGLE_FORM_URL =
+"https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/formResponse";
 
-        const clima = await respostaClima.json();
-        if (clima.error || !clima.current || typeof clima.current.temperature_2m !== "number") {
-          throw new Error(clima.reason || "Não foi possível obter a temperatura para essas coordenadas.");
-        }
+const form = document.getElementById("geoForm");
 
-        const temperatura = clima.current.temperature_2m;
-        const horario = clima.current.time || "não informado";
-        resumoClima = `🌡️ Temperatura atual: ${temperatura} °C | 🕒 Horário da consulta: ${horario}.`;
-      } catch (erroClima) {
-        avisoClima = " A consulta do clima não ficou disponível neste momento.";
-      }
+const localInput = document.getElementById("local");
+const latInput = document.getElementById("latitude");
+const lngInput = document.getElementById("longitude");
 
-      mostrarStatus("⏳ Enviando seu registro ao Google Forms...", "loading");
+const btnGps = document.getElementById("btnGps");
+const btnSubmit = document.getElementById("btnSubmit");
+const btnPDF = document.getElementById("btnPDF");
+const btnShare = document.getElementById("btnShare");
 
-      const dados = new URLSearchParams();
-      dados.append("entry.346371602", nome);
-      dados.append("entry.260018039", lat.toFixed(6));
-      dados.append("entry.1955144794", lng.toFixed(6));
+const gpsStatus = document.getElementById("gpsStatus");
+const previewText = document.getElementById("previewText");
+const mapLink = document.getElementById("mapLink");
 
-      try {
-        await fetch(GOOGLE_FORM_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: dados.toString()
-        });
+const mapContainer = document.getElementById("mapContainer");
+const mapFrame = document.getElementById("mapFrame");
 
-        const retorno = [
-          "✅ Solicitação de envio concluída.",
-          `📍 Local: ${nome}`,
-          resumoClima,
-          avisoClima,
-          "⚠️ O navegador não permite confirmar a gravação no Google Forms. Confira a planilha de respostas para validar o registro."
-        ].filter(Boolean).join("\n");
-        mostrarStatus(retorno, avisoClima ? "warning" : "success");
+const weatherBox = document.getElementById("weatherBox");
+const temperature = document.getElementById("temperature");
+const weatherTime = document.getElementById("weatherTime");
 
-        // Mantém os dados na tela para que o usuário possa conferir o que enviou.
-      } catch (erro) {
-        mostrarStatus("❌ Não foi possível iniciar o envio. Verifique sua conexão e tente novamente. Seus dados continuam preenchidos.", "error");
-      } finally {
-        enviando = false;
-        btnSubmit.disabled = false;
-        btnSubmit.textContent = "Enviar registro ao Google Forms →";
-      }
-    });
+const status = document.getElementById("status");
 
+let enviando = false;
+let timerBusca;
+let ultimoRegistro = null;
+let origemCoordenadas = "manual";
+
+function parseCoord(value) {
+
+  const clean = value.trim();
+
+  if (!/^-?\d+(?:[.,]\d+)?$/.test(clean)) {
+    return NaN;
+  }
+
+  return Number(clean.replace(",", "."));
+
+}
+
+function getCoordinates() {
+
+  const lat = parseCoord(latInput.value);
+  const lng = parseCoord(lngInput.value);
+
+  const valid =
+    Number.isFinite(lat) &&
+    Number.isFinite(lng) &&
+    lat >= -90 &&
+    lat <= 90 &&
+    lng >= -180 &&
+    lng <= 180;
+
+  return {lat, lng, valid};
+
+}
+
+function updatePreview() {
+
+  const {lat, lng, valid} = getCoordinates();
+
+  if (!valid) {
+
+    previewText.textContent = "Aguardando coordenadas válidas.";
+
+    mapLink.href = "#";
+    mapContainer.style.display = "none";
+
+    btnPDF.disabled = true;
+    btnShare.disabled = true;
+
+    weatherBox.style.display = "none";
+
+    return false;
+
+  }
+
+  previewText.textContent =
+    `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
+  mapLink.href =
+    `https://www.google.com/maps?q=${lat},${lng}`;
+
+  mapContainer.style.display = "block";
+
+  mapFrame.src =
+    `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+
+  btnPDF.disabled = false;
+  btnShare.disabled = false;
+
+  return true;
+
+}
+
+latInput.addEventListener("input", () => {
+  origemCoordenadas = "manual";
+  ultimoRegistro = null;
+  updatePreview();
+});
+
+lngInput.addEventListener("input", () => {
+  origemCoordenadas = "manual";
+  ultimoRegistro = null;
+  updatePreview();
+});
+
+localInput.addEventListener("input", () => {
+
+  clearTimeout(timerBusca);
+
+  if (origemCoordenadas === "auto") {
+    latInput.value = "";
+    lngInput.value = "";
+    origemCoordenadas = "manual";
     updatePreview();
-  </script>
+  }
+
+  ultimoRegistro = null;
+
+  const nome = localInput.value.trim();
+
+  if (nome.length < 3) {
+    gpsStatus.textContent = "Digite pelo menos 3 letras.";
+    return;
+  }
+
+  timerBusca = setTimeout(async () => {
+
+    if (latInput.value.trim() || lngInput.value.trim()) {
+      return;
+    }
+
+    gpsStatus.textContent = "Buscando localização...";
+
+    try {
+
+      const url =
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nome)}&count=10&language=pt&format=json`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error("Erro na consulta.");
+      }
+
+      const data = await response.json();
+
+      if (localInput.value.trim() !== nome) return;
+
+      if (!data.results || !data.results.length) {
+        gpsStatus.textContent = "Local não encontrado.";
+        return;
+      }
+
+      const found =
+        data.results.find(item => item.country_code === "BR") ||
+        data.results[0];
+
+      origemCoordenadas = "auto";
+
+      latInput.value = found.latitude.toFixed(6);
+      lngInput.value = found.longitude.toFixed(6);
+
+      gpsStatus.textContent =
+        `Sugestão: ${found.name} - ${found.admin1 || found.country}. Confira as coordenadas.`;
+
+      updatePreview();
+
+    } catch(error) {
+
+      gpsStatus.textContent =
+        "Não foi possível buscar automaticamente.";
+
+    }
+
+  }, 700);
+
+});
+
+btnGps.addEventListener("click", () => {
+
+  clearTimeout(timerBusca);
+
+  if (!navigator.geolocation) {
+    gpsStatus.textContent = "GPS não suportado pelo navegador.";
+    return;
+  }
+
+  btnGps.disabled = true;
+  btnGps.textContent = "Localizando...";
+
+  navigator.geolocation.getCurrentPosition(
+
+    position => {
+
+      origemCoordenadas = "gps";
+
+      latInput.value =
+        position.coords.latitude.toFixed(6);
+
+      lngInput.value =
+        position.coords.longitude.toFixed(6);
+
+      gpsStatus.textContent =
+        "Localização GPS obtida com sucesso.";
+
+      btnGps.disabled = false;
+      btnGps.textContent = "Atualizar localização";
+
+      ultimoRegistro = null;
+
+      updatePreview();
+
+    },
+
+    error => {
+
+      gpsStatus.textContent =
+        "Não foi possível obter o GPS. Verifique a permissão e a conexão.";
+
+      btnGps.disabled = false;
+      btnGps.textContent = "Usar minha localização";
+
+    },
+
+    {
+      enableHighAccuracy:true,
+      timeout:15000,
+      maximumAge:0
+    }
+
+  );
+
+});
+
+function showStatus(message, type) {
+
+  status.textContent = message;
+  status.className = `status ${type}`;
+
+}
+
+async function consultarClima(lat, lng) {
+
+  const url = new URL(
+    "https://api.open-meteo.com/v1/forecast"
+  );
+
+  url.search = new URLSearchParams({
+
+    latitude:lat,
+    longitude:lng,
+    current:"temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m",
+    timezone:"auto"
+
+  }).toString();
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Falha na consulta meteorológica.");
+  }
+
+  const data = await response.json();
+
+  if (!data.current) {
+    throw new Error("Dados meteorológicos indisponíveis.");
+  }
+
+  return data;
+
+}
+
+form.addEventListener("submit", async event => {
+
+  event.preventDefault();
+
+  if (enviando) return;
+
+  const nome = localInput.value.trim();
+
+  const {lat, lng, valid} = getCoordinates();
+
+  if (nome.length < 2) {
+
+    showStatus("Informe o nome do local.", "error");
+    localInput.focus();
+
+    return;
+
+  }
+
+  if (!valid) {
+
+    showStatus("Confira a latitude e longitude.", "error");
+
+    return;
+
+  }
+
+  enviando = true;
+
+  btnSubmit.disabled = true;
+  btnSubmit.textContent = "Consultando clima...";
+
+  let clima = null;
+  let avisoClima = "";
+
+  showStatus(
+    "Consultando as condições meteorológicas...",
+    "loading"
+  );
+
+  try {
+
+    clima = await consultarClima(lat, lng);
+
+    const atual = clima.current;
+
+    temperature.textContent =
+      `${atual.temperature_2m} °C`;
+
+    weatherTime.textContent =
+      `Sensação térmica: ${atual.apparent_temperature} °C | Umidade: ${atual.relative_humidity_2m}% | Vento: ${atual.wind_speed_10m} km/h | ${atual.time}`;
+
+    weatherBox.style.display = "block";
+
+  } catch(error) {
+
+    avisoClima =
+      "A consulta meteorológica não ficou disponível.";
+
+    weatherBox.style.display = "none";
+
+  }
+
+  showStatus(
+    "Enviando registro ao Google Forms...",
+    "loading"
+  );
+
+  const dados = new URLSearchParams();
+
+  dados.append("entry.346371602", nome);
+  dados.append("entry.260018039", lat.toFixed(6));
+  dados.append("entry.1955144794", lng.toFixed(6));
+
+  try {
+
+    await fetch(GOOGLE_FORM_URL, {
+
+      method:"POST",
+      mode:"no-cors",
+
+      headers:{
+        "Content-Type":"application/x-www-form-urlencoded"
+      },
+
+      body:dados.toString()
+
+    });
+
+    ultimoRegistro = {
+
+      local:nome,
+      latitude:lat,
+      longitude:lng,
+
+      temperatura:clima?.current?.temperature_2m ?? null,
+
+      sensacao:clima?.current?.apparent_temperature ?? null,
+
+      umidade:clima?.current?.relative_humidity_2m ?? null,
+
+      vento:clima?.current?.wind_speed_10m ?? null,
+
+      horario:clima?.current?.time ?? "Não disponível",
+
+      timezone:clima?.timezone ?? "Não informado",
+
+      data:new Date().toLocaleString("pt-BR")
+
+    };
+
+    showStatus(
+
+      "Solicitação de envio concluída!\n\n" +
+      `Local: ${nome}\n` +
+      `Latitude: ${lat.toFixed(6)}\n` +
+      `Longitude: ${lng.toFixed(6)}\n` +
+      (clima
+        ? `Temperatura: ${clima.current.temperature_2m} °C\n`
+        : "") +
+      (avisoClima ? avisoClima + "\n" : "") +
+      "\nConfira a planilha do Google Forms para confirmar a gravação.",
+
+      avisoClima ? "warning" : "success"
+
+    );
+
+  } catch(error) {
+
+    showStatus(
+      "Não foi possível iniciar o envio. Verifique sua conexão.",
+      "error"
+    );
+
+  } finally {
+
+    enviando = false;
+
+    btnSubmit.disabled = false;
+
+    btnSubmit.textContent =
+      "Enviar registro ao Google Forms →";
+
+  }
+
+});
+
+function getReportData() {
+
+  if (ultimoRegistro) return ultimoRegistro;
+
+  const {lat, lng, valid} = getCoordinates();
+
+  if (!valid) return null;
+
+  return {
+
+    local:localInput.value.trim() || "Não informado",
+
+    latitude:lat,
+    longitude:lng,
+
+    temperatura:null,
+    horario:"Não consultado",
+
+    data:new Date().toLocaleString("pt-BR")
+
+  };
+
+}
+
+btnPDF.addEventListener("click", () => {
+
+  const registro = getReportData();
+
+  if (!registro) return;
+
+  if (!window.jspdf) {
+
+    showStatus(
+      "Não foi possível carregar a biblioteca de PDF. Verifique sua conexão.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const {jsPDF} = window.jspdf;
+
+  const pdf = new jsPDF();
+
+  pdf.setFontSize(20);
+
+  pdf.text("Relatório Meteorológico", 20, 25);
+
+  pdf.setFontSize(11);
+
+  pdf.text("Registro Geográfico", 20, 35);
+
+  pdf.line(20, 42, 190, 42);
+
+  const linhas = [
+
+    `Local: ${registro.local}`,
+
+    `Latitude: ${registro.latitude.toFixed(6)}`,
+
+    `Longitude: ${registro.longitude.toFixed(6)}`,
+
+    `Temperatura: ${registro.temperatura !== null ? registro.temperatura + " °C" : "Não consultada"}`,
+
+    `Sensação térmica: ${registro.sensacao ?? "Não disponível"} °C`,
+
+    `Umidade: ${registro.umidade ?? "Não disponível"}%`,
+
+    `Velocidade do vento: ${registro.vento ?? "Não disponível"} km/h`,
+
+    `Horário da consulta: ${registro.horario}`,
+
+    `Data do relatório: ${registro.data}`
+
+  ];
+
+  let y = 58;
+
+  linhas.forEach(linha => {
+
+    pdf.text(linha, 20, y);
+
+    y += 12;
+
+  });
+
+  pdf.line(20, y + 5, 190, y + 5);
+
+  pdf.setFontSize(9);
+
+  pdf.text(
+    "Fonte meteorológica: Open-Meteo API",
+    20,
+    y + 17
+  );
+
+  pdf.text(
+    "Sistema: Coleta Meteorológica",
+    20,
+    y + 24
+  );
+
+  pdf.save("relatorio-meteorologico.pdf");
+
+});
+
+btnShare.addEventListener("click", async () => {
+
+  const registro = getReportData();
+
+  if (!registro) return;
+
+  const texto = [
+
+    "RELATÓRIO DE COLETA METEOROLÓGICA",
+
+    `Local: ${registro.local}`,
+
+    `Latitude: ${registro.latitude.toFixed(6)}`,
+
+    `Longitude: ${registro.longitude.toFixed(6)}`,
+
+    `Temperatura: ${registro.temperatura !== null ? registro.temperatura + " °C" : "Não consultada"}`,
+
+    `Sensação térmica: ${registro.sensacao ?? "Não disponível"} °C`,
+
+    `Umidade: ${registro.umidade ?? "Não disponível"}%`,
+
+    `Vento: ${registro.vento ?? "Não disponível"} km/h`,
+
+    `Data: ${registro.data}`,
+
+    `Mapa: https://www.google.com/maps?q=${registro.latitude},${registro.longitude}`
+
+  ].join("\n");
+
+  try {
+
+    if (navigator.share) {
+
+      await navigator.share({
+
+        title:"Coleta Meteorológica",
+
+        text:texto
+
+      });
+
+    } else if (navigator.clipboard) {
+
+      await navigator.clipboard.writeText(texto);
+
+      showStatus(
+        "Registro copiado para a área de transferência!",
+        "success"
+      );
+
+    } else {
+
+      showStatus(
+        "Compartilhamento não suportado neste navegador.",
+        "warning"
+      );
+
+    }
+
+  } catch(error) {
+
+    if (error.name !== "AbortError") {
+
+      showStatus(
+        "Não foi possível compartilhar o registro.",
+        "error"
+      );
+
+    }
+
+  }
+
+});
+
+updatePreview();
+
+</script>
+
 </body>
 </html>
+```
