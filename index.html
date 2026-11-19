@@ -541,6 +541,7 @@
       border-radius: 8px;
       font-size: 0.84rem;
       text-align: center;
+      white-space: pre-line;
       display: none;
     }
 
@@ -556,6 +557,20 @@
       background-color: rgba(239, 68, 68, 0.12);
       border: 1px solid rgba(239, 68, 68, 0.35);
       color: #fca5a5;
+    }
+
+    .status-banner.loading {
+      display: block;
+      background-color: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #bfdbfe;
+    }
+
+    .status-banner.warning {
+      display: block;
+      background-color: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fcd34d;
     }
 
     footer {
@@ -759,7 +774,7 @@
           O envio é realizado diretamente para a planilha integrada ao formulário sem sair desta página.
         </p>
 
-        <div id="statusBanner" class="status-banner"></div>
+        <div id="statusBanner" class="status-banner" role="status" aria-live="polite" aria-atomic="true"></div>
       </form>
     </section>
   </main>
@@ -921,6 +936,11 @@
       );
     });
 
+    function mostrarStatus(mensagem, tipo) {
+      statusBanner.textContent = mensagem;
+      statusBanner.className = `status-banner ${tipo}`;
+    }
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -930,22 +950,51 @@
       const { lat, lng, valido } = updatePreview();
 
       if (nome.length < 2) {
-        statusBanner.textContent = "Informe o nome do local.";
-        statusBanner.className = "status-banner error";
+        mostrarStatus("Informe o nome do local antes de continuar.", "error");
+        inputLocal.focus();
         return;
       }
 
       if (!valido) {
-        statusBanner.textContent = "Informe coordenadas válidas.";
-        statusBanner.className = "status-banner error";
+        mostrarStatus("Coordenadas inválidas. Confira latitude e longitude (use ponto ou vírgula decimal).", "error");
+        (!Number.isFinite(lat) || lat < -90 || lat > 90 ? inputLat : inputLng).focus();
         return;
       }
 
       enviando = true;
       btnSubmit.disabled = true;
-      btnSubmit.textContent = "Enviando...";
-      statusBanner.className = "status-banner";
-      statusBanner.textContent = "";
+      btnSubmit.textContent = "Consultando e enviando...";
+      mostrarStatus("⏳ Consultando as condições meteorológicas...", "loading");
+
+      let resumoClima = "";
+      let avisoClima = "";
+
+      try {
+        // Consulta a temperatura atual na API Open-Meteo.
+        const climaUrl = new URL("https://api.open-meteo.com/v1/forecast");
+        climaUrl.search = new URLSearchParams({
+          latitude: lat,
+          longitude: lng,
+          current: "temperature_2m",
+          timezone: "auto"
+        }).toString();
+
+        const respostaClima = await fetch(climaUrl);
+        if (!respostaClima.ok) throw new Error("A consulta meteorológica não respondeu corretamente.");
+
+        const clima = await respostaClima.json();
+        if (clima.error || !clima.current || typeof clima.current.temperature_2m !== "number") {
+          throw new Error(clima.reason || "Não foi possível obter a temperatura para essas coordenadas.");
+        }
+
+        const temperatura = clima.current.temperature_2m;
+        const horario = clima.current.time || "não informado";
+        resumoClima = `🌡️ Temperatura atual: ${temperatura} °C | 🕒 Horário da consulta: ${horario}.`;
+      } catch (erroClima) {
+        avisoClima = " A consulta do clima não ficou disponível neste momento.";
+      }
+
+      mostrarStatus("⏳ Enviando seu registro ao Google Forms...", "loading");
 
       const dados = new URLSearchParams();
       dados.append("entry.346371602", nome);
@@ -962,16 +1011,18 @@
           body: dados.toString()
         });
 
-        statusBanner.textContent = "Solicitação enviada! Confira a planilha para confirmar o registro.";
-        statusBanner.className = "status-banner success";
+        const retorno = [
+          "✅ Solicitação de envio concluída.",
+          `📍 Local: ${nome}`,
+          resumoClima,
+          avisoClima,
+          "⚠️ O navegador não permite confirmar a gravação no Google Forms. Confira a planilha de respostas para validar o registro."
+        ].filter(Boolean).join("\n");
+        mostrarStatus(retorno, avisoClima ? "warning" : "success");
 
-        form.reset();
-        origemCoordenadas = "manual";
-        updatePreview();
-        gpsStatusText.textContent = "Informe outro local ou utilize o GPS.";
+        // Mantém os dados na tela para que o usuário possa conferir o que enviou.
       } catch (erro) {
-        statusBanner.textContent = "Erro ao enviar. Verifique sua conexão.";
-        statusBanner.className = "status-banner error";
+        mostrarStatus("❌ Não foi possível iniciar o envio. Verifique sua conexão e tente novamente. Seus dados continuam preenchidos.", "error");
       } finally {
         enviando = false;
         btnSubmit.disabled = false;
