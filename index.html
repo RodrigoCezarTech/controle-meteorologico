@@ -852,11 +852,22 @@
         previewText.classList.add("valid");
         mapLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
         mapLink.classList.add("active");
+        document.getElementById("mapFrame").src =
+  `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+
+document.getElementById("mapContainer").style.display = "block";
+
+document.getElementById("btnPDF").disabled = false;
+document.getElementById("btnShare").disabled = false;
       } else {
         previewText.textContent = "Aguardando coordenadas válidas...";
         previewText.classList.remove("valid");
         mapLink.href = "#";
         mapLink.classList.remove("active");
+        document.getElementById("mapContainer").style.display = "none";
+
+document.getElementById("btnPDF").disabled = true;
+document.getElementById("btnShare").disabled = true;
       }
 
       return { lat, lng, valido };
