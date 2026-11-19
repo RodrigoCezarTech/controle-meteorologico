@@ -39,7 +39,6 @@
       padding: 1.75rem 2rem;
     }
 
-    /* Cabeçalho */
     header {
       max-width: 1140px;
       width: 100%;
@@ -106,7 +105,6 @@
       box-shadow: 0 0 8px var(--accent);
     }
 
-    /* Layout Principal em 2 Colunas */
     main {
       max-width: 1140px;
       width: 100%;
@@ -127,7 +125,6 @@
       }
     }
 
-    /* Coluna Esquerda - Editorial & Globo */
     .eyebrow {
       display: inline-flex;
       align-items: center;
@@ -170,7 +167,6 @@
       margin-bottom: 2.25rem;
     }
 
-    /* Ilustração do Globo */
     .globe-wrapper {
       position: relative;
       width: 230px;
@@ -223,7 +219,6 @@
       animation: pulseRing 2.4s infinite ease-out;
     }
 
-    /* Passos 01, 02, 03 */
     .steps {
       display: flex;
       flex-direction: column;
@@ -264,7 +259,6 @@
       color: var(--text-secondary);
     }
 
-    /* Coluna Direita - Cartão do Formulário */
     .form-card {
       background-color: var(--card-bg);
       border: 1px solid var(--border-subtle);
@@ -369,7 +363,6 @@
       margin-top: 0.4rem;
     }
 
-    /* Caixa de Preenchimento por GPS */
     .gps-box {
       background-color: var(--card-inner);
       border: 1px solid var(--border-subtle);
@@ -446,7 +439,6 @@
       color: var(--text-muted);
     }
 
-    /* Grid Latitude / Longitude */
     .coords-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -454,7 +446,6 @@
       margin-bottom: 1.25rem;
     }
 
-    /* Prévia das Coordenadas */
     .preview-box {
       background-color: var(--card-inner);
       border: 1px solid var(--border-subtle);
@@ -506,7 +497,6 @@
       text-decoration: underline;
     }
 
-    /* Botão Principal */
     .btn-submit {
       width: 100%;
       background-color: var(--accent);
@@ -568,7 +558,6 @@
       color: #fca5a5;
     }
 
-    /* Rodapé */
     footer {
       max-width: 1140px;
       width: 100%;
@@ -614,7 +603,6 @@
   </header>
 
   <main>
-    <!-- Coluna Esquerda -->
     <section>
       <div class="eyebrow">Localização &amp; Dados</div>
       <h1 class="hero-title">
@@ -626,7 +614,6 @@
         Registre um local de coleta meteorológica com suas coordenadas geográficas. Você pode preencher tudo manualmente ou usar a localização do dispositivo, se autorizar.
       </p>
 
-      <!-- Ilustração Vetorial do Globo -->
       <div class="globe-wrapper" aria-hidden="true">
         <svg class="globe-svg" viewBox="0 0 220 220" fill="none">
           <defs>
@@ -638,21 +625,18 @@
           </defs>
           <circle cx="110" cy="110" r="105" fill="url(#globeGlow)"/>
           <circle cx="110" cy="110" r="82" stroke="#1e424d" stroke-width="1.2"/>
-          <!-- Meridianos e Paralelos -->
           <ellipse cx="110" cy="110" rx="42" ry="82" stroke="#183640" stroke-width="1"/>
           <ellipse cx="110" cy="110" rx="68" ry="82" stroke="#183640" stroke-width="1"/>
           <ellipse cx="110" cy="110" rx="82" ry="30" stroke="#183640" stroke-width="1"/>
           <ellipse cx="110" cy="110" rx="82" ry="60" stroke="#183640" stroke-width="1"/>
           <line x1="28" y1="110" x2="192" y2="110" stroke="#224b57" stroke-width="1" stroke-dasharray="3 3"/>
           <line x1="110" y1="28" x2="110" y2="192" stroke="#224b57" stroke-width="1" stroke-dasharray="3 3"/>
-          <!-- Ponto Geográfico Pulsante -->
           <circle class="pulse-circle" cx="145" cy="96" r="8" stroke="#46e5b7" stroke-width="1.5"/>
           <circle cx="145" cy="96" r="4.5" fill="#46e5b7"/>
         </svg>
         <div class="globe-tag"><span></span>PONTO GEOGRÁFICO</div>
       </div>
 
-      <!-- Passos -->
       <div class="steps">
         <div class="step">
           <div class="step-badge">01</div>
@@ -678,7 +662,6 @@
       </div>
     </section>
 
-    <!-- Coluna Direita - Formulário -->
     <section class="form-card">
       <div class="card-top">
         <span class="tag">Novo Registro</span>
@@ -699,19 +682,18 @@
                 <circle cx="12" cy="10" r="3"/>
               </svg>
             </span>
-            <input 
-              type="text" 
-              id="local" 
-              name="entry.346371602" 
+            <input
+              type="text"
+              id="local"
+              name="entry.346371602"
               class="with-icon"
-              placeholder="Ex: Estação de Cotia" 
+              placeholder="Ex: Estação de Cotia"
               required
             >
           </div>
-          <small class="helper-text">Use um nome que permita identificar o ponto futuramente.</small>
+          <small class="helper-text">Digite o nome do local ou preencha as coordenadas diretamente.</small>
         </div>
 
-        <!-- Bloco GPS -->
         <div class="gps-box">
           <div class="gps-box-top">
             <div class="gps-info">
@@ -733,15 +715,14 @@
           </div>
         </div>
 
-        <!-- Campos Latitude e Longitude -->
         <div class="coords-grid">
           <div>
             <label class="field-label" for="latitude">Latitude <span>*</span></label>
-            <input 
-              type="text" 
-              id="latitude" 
-              name="entry.260018039" 
-              placeholder="Ex: -23.603500" 
+            <input
+              type="text"
+              id="latitude"
+              name="entry.260018039"
+              placeholder="Ex: -23.603500"
               inputmode="decimal"
               required
             >
@@ -750,11 +731,11 @@
 
           <div>
             <label class="field-label" for="longitude">Longitude <span>*</span></label>
-            <input 
-              type="text" 
-              id="longitude" 
-              name="entry.1955144794" 
-              placeholder="Ex: -46.919500" 
+            <input
+              type="text"
+              id="longitude"
+              name="entry.1955144794"
+              placeholder="Ex: -46.919500"
               inputmode="decimal"
               required
             >
@@ -762,7 +743,6 @@
           </div>
         </div>
 
-        <!-- Prévia das Coordenadas -->
         <div class="preview-box">
           <div>
             <small>Prévia das Coordenadas</small>
@@ -788,265 +768,218 @@
     <p>Coleta Meteorológica · Interface independente integrada ao Google Forms.</p>
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/viewform" target="_blank" rel="noopener noreferrer">Abrir formulário original ↗</a>
   </footer>
-<script>
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/formResponse";
 
-const form = document.getElementById("geoForm");
-const inputLocal = document.getElementById("local");
-const inputLat = document.getElementById("latitude");
-const inputLng = document.getElementById("longitude");
-const btnGps = document.getElementById("btnGps");
-const gpsStatusText = document.getElementById("gpsStatusText");
-const previewText = document.getElementById("previewText");
-const mapLink = document.getElementById("mapLink");
-const btnSubmit = document.getElementById("btnSubmit");
-const statusBanner = document.getElementById("statusBanner");
+  <script>
+    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeTN0-x6H_4JktWa03INvc3uyJduHjPOzmcwydaF6NGGLUauw/formResponse";
 
-let enviando = false;
-let temporizadorBusca;
+    const form = document.getElementById("geoForm");
+    const inputLocal = document.getElementById("local");
+    const inputLat = document.getElementById("latitude");
+    const inputLng = document.getElementById("longitude");
+    const btnGps = document.getElementById("btnGps");
+    const gpsStatusText = document.getElementById("gpsStatusText");
+    const previewText = document.getElementById("previewText");
+    const mapLink = document.getElementById("mapLink");
+    const btnSubmit = document.getElementById("btnSubmit");
+    const statusBanner = document.getElementById("statusBanner");
 
-function parseCoord(valor) {
-    valor = valor.trim();
+    let enviando = false;
+    let temporizadorBusca = null;
+    let origemCoordenadas = "manual"; // "manual" | "auto" | "gps"
 
-    if (!/^-?\d+(?:[.,]\d+)?$/.test(valor)) {
+    function parseCoord(valor) {
+      const limpo = valor.trim();
+      if (!/^-?\d+(?:[.,]\d+)?$/.test(limpo)) {
         return NaN;
+      }
+      return Number(limpo.replace(",", "."));
     }
 
-    return Number(valor.replace(",", "."));
-}
+    function updatePreview() {
+      const lat = parseCoord(inputLat.value);
+      const lng = parseCoord(inputLng.value);
 
-function updatePreview() {
-    const lat = parseCoord(inputLat.value);
-    const lng = parseCoord(inputLng.value);
-
-    const valido =
+      const valido =
         Number.isFinite(lat) &&
         Number.isFinite(lng) &&
         lat >= -90 && lat <= 90 &&
         lng >= -180 && lng <= 180;
 
-    if (valido) {
-        previewText.textContent =
-            `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-
+      if (valido) {
+        previewText.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
         previewText.classList.add("valid");
-
-        mapLink.href =
-            `https://www.google.com/maps?q=${lat},${lng}`;
-
+        mapLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
         mapLink.classList.add("active");
-    } else {
-        previewText.textContent =
-            "Aguardando coordenadas válidas...";
-
+      } else {
+        previewText.textContent = "Aguardando coordenadas válidas...";
         previewText.classList.remove("valid");
         mapLink.href = "#";
         mapLink.classList.remove("active");
+      }
+
+      return { lat, lng, valido };
     }
 
-    return { lat, lng, valido };
-}
+    inputLat.addEventListener("input", () => {
+      origemCoordenadas = "manual";
+      updatePreview();
+    });
 
-// Atualizar prévia
-inputLat.addEventListener("input", updatePreview);
-inputLng.addEventListener("input", updatePreview);
+    inputLng.addEventListener("input", () => {
+      origemCoordenadas = "manual";
+      updatePreview();
+    });
 
-// Buscar coordenadas pelo nome
-inputLocal.addEventListener("input", () => {
+    inputLocal.addEventListener("input", () => {
+      clearTimeout(temporizadorBusca);
 
-    clearTimeout(temporizadorBusca);
+      const nome = inputLocal.value.trim();
 
-    inputLat.value = "";
-    inputLng.value = "";
-    updatePreview();
+      // Só limpa coordenadas se elas tiverem vindo de busca automática anterior
+      if (origemCoordenadas === "auto") {
+        inputLat.value = "";
+        inputLng.value = "";
+        updatePreview();
+      }
 
-    const nome = inputLocal.value.trim();
-
-    if (nome.length < 3) {
-        gpsStatusText.textContent =
-            "Digite pelo menos 3 letras para buscar.";
+      if (nome.length < 3) {
+        gpsStatusText.textContent = "Digite pelo menos 3 letras para buscar ou use o GPS.";
         return;
-    }
+      }
 
-    temporizadorBusca = setTimeout(async () => {
+      temporizadorBusca = setTimeout(async () => {
+        // Não sobrescreve se o usuário já escolheu GPS ou digitou coordenadas manualmente
+        if (origemCoordenadas !== "auto" && (inputLat.value.trim() || inputLng.value.trim())) {
+          return;
+        }
 
-        gpsStatusText.textContent =
-            "Buscando localização...";
+        gpsStatusText.textContent = "Buscando localização...";
 
         try {
-            const url =
-                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nome)}&count=10&language=pt&format=json`;
+          const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nome)}&count=10&language=pt&format=json`;
+          const resposta = await fetch(url);
 
-            const resposta = await fetch(url);
+          if (!resposta.ok) {
+            throw new Error("Erro na consulta");
+          }
 
-            if (!resposta.ok) {
-                throw new Error("Erro na consulta");
-            }
+          const dados = await resposta.json();
 
-            const dados = await resposta.json();
-
-            if (!dados.results || dados.results.length === 0) {
-                gpsStatusText.textContent =
-                    "Local não encontrado.";
-                return;
-            }
-
-            const local =
-                dados.results.find(item =>
-                    item.country_code === "BR"
-                ) || dados.results[0];
-
-            if (inputLocal.value.trim() !== nome) return;
-
-            inputLat.value = local.latitude.toFixed(6);
-            inputLng.value = local.longitude.toFixed(6);
-
-            gpsStatusText.textContent =
-                `Encontrado: ${local.name} - ${local.admin1 || local.country}. Confira as coordenadas.`;
-
-            updatePreview();
-
-        } catch (erro) {
-            gpsStatusText.textContent =
-                "Erro ao buscar localização.";
-        }
-
-    }, 700);
-});
-
-// Capturar GPS
-btnGps.addEventListener("click", () => {
-
-    if (!navigator.geolocation) {
-        gpsStatusText.textContent =
-            "Navegador sem suporte a GPS.";
-        return;
-    }
-
-    btnGps.disabled = true;
-    btnGps.textContent = "Localizando...";
-
-    navigator.geolocation.getCurrentPosition(
-
-        position => {
-
-            inputLat.value =
-                position.coords.latitude.toFixed(6);
-
-            inputLng.value =
-                position.coords.longitude.toFixed(6);
-
-            btnGps.disabled = false;
-            btnGps.textContent = "Atualizar localização";
-
-            gpsStatusText.textContent =
-                "Localização GPS obtida com sucesso.";
-
-            updatePreview();
-        },
-
-        error => {
-
-            btnGps.disabled = false;
-            btnGps.textContent = "Usar minha localização";
-
-            gpsStatusText.textContent =
-                "Não foi possível obter o GPS. Verifique a permissão.";
-        },
-
-        {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
-        }
-    );
-});
-
-// Enviar para Google Forms
-form.addEventListener("submit", async (e) => {
-
-    e.preventDefault();
-
-    if (enviando) return;
-
-    const nome = inputLocal.value.trim();
-    const { lat, lng, valido } = updatePreview();
-
-    if (nome.length < 2) {
-        statusBanner.textContent =
-            "Informe o nome do local.";
-
-        statusBanner.className = "status-banner error";
-        return;
-    }
-
-    if (!valido) {
-        statusBanner.textContent =
-            "Informe coordenadas válidas.";
-
-        statusBanner.className = "status-banner error";
-        return;
-    }
-
-    if (lat < -35 || lat > 6 || lng < -75 || lng > -30) {
-        if (!confirm("As coordenadas estão fora da área aproximada do Brasil. Deseja continuar?")) {
+          if (!dados.results || dados.results.length === 0) {
+            gpsStatusText.textContent = "Local não encontrado. Preencha as coordenadas manualmente ou use o GPS.";
             return;
+          }
+
+          const local = dados.results.find(item => item.country_code === "BR") || dados.results[0];
+
+          if (inputLocal.value.trim() !== nome) return;
+
+          origemCoordenadas = "auto";
+          inputLat.value = local.latitude.toFixed(6);
+          inputLng.value = local.longitude.toFixed(6);
+
+          gpsStatusText.textContent = `Sugestão: ${local.name} - ${local.admin1 || local.country}. Confira antes de enviar.`;
+          updatePreview();
+        } catch (erro) {
+          gpsStatusText.textContent = "Não foi possível buscar automaticamente. Preencha manualmente ou use o GPS.";
         }
-    }
+      }, 700);
+    });
 
-    enviando = true;
+    btnGps.addEventListener("click", () => {
+      clearTimeout(temporizadorBusca);
 
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = "Enviando...";
+      if (!navigator.geolocation) {
+        gpsStatusText.textContent = "Navegador sem suporte a GPS.";
+        return;
+      }
 
-    const dados = new URLSearchParams();
+      btnGps.disabled = true;
+      btnGps.textContent = "Localizando...";
 
-    dados.append("entry.346371602", nome);
-    dados.append("entry.260018039", lat.toFixed(6));
-    dados.append("entry.1955144794", lng.toFixed(6));
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          origemCoordenadas = "gps";
+          inputLat.value = position.coords.latitude.toFixed(6);
+          inputLng.value = position.coords.longitude.toFixed(6);
 
-    try {
+          btnGps.disabled = false;
+          btnGps.textContent = "Atualizar localização";
+          gpsStatusText.textContent = "Localização GPS obtida com sucesso.";
+          updatePreview();
+        },
+        error => {
+          btnGps.disabled = false;
+          btnGps.textContent = "Usar minha localização";
+          gpsStatusText.textContent = "Não foi possível obter o GPS. Verifique a permissão do navegador.";
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
+    });
 
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (enviando) return;
+
+      const nome = inputLocal.value.trim();
+      const { lat, lng, valido } = updatePreview();
+
+      if (nome.length < 2) {
+        statusBanner.textContent = "Informe o nome do local.";
+        statusBanner.className = "status-banner error";
+        return;
+      }
+
+      if (!valido) {
+        statusBanner.textContent = "Informe coordenadas válidas.";
+        statusBanner.className = "status-banner error";
+        return;
+      }
+
+      enviando = true;
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Enviando...";
+      statusBanner.className = "status-banner";
+      statusBanner.textContent = "";
+
+      const dados = new URLSearchParams();
+      dados.append("entry.346371602", nome);
+      dados.append("entry.260018039", lat.toFixed(6));
+      dados.append("entry.1955144794", lng.toFixed(6));
+
+      try {
         await fetch(GOOGLE_FORM_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-                "Content-Type":
-                    "application/x-www-form-urlencoded"
-            },
-            body: dados.toString()
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: dados.toString()
         });
 
-        statusBanner.textContent =
-            "Solicitação enviada! Confira a planilha para confirmar o registro.";
-
+        statusBanner.textContent = "Solicitação enviada! Confira a planilha para confirmar o registro.";
         statusBanner.className = "status-banner success";
 
         form.reset();
+        origemCoordenadas = "manual";
         updatePreview();
-
-        gpsStatusText.textContent =
-            "Informe outro local ou utilize o GPS.";
-
-    } catch (erro) {
-
-        statusBanner.textContent =
-            "Erro ao enviar. Verifique sua conexão.";
-
+        gpsStatusText.textContent = "Informe outro local ou utilize o GPS.";
+      } catch (erro) {
+        statusBanner.textContent = "Erro ao enviar. Verifique sua conexão.";
         statusBanner.className = "status-banner error";
-
-    } finally {
-
+      } finally {
         enviando = false;
         btnSubmit.disabled = false;
+        btnSubmit.textContent = "Enviar registro ao Google Forms →";
+      }
+    });
 
-        btnSubmit.textContent =
-            "Enviar registro ao Google Forms →";
-    }
-});
-
-updatePreview();
-</script>
-
+    updatePreview();
+  </script>
 </body>
 </html>
